@@ -17,8 +17,8 @@ clear_vram_page:
   ld (height), hl      ; 212 pixels tall
 
   xor a
-  ld (color), a        ; Color 0 (Black)
-  ld (argument), a     ; 0
+  ld (color), a 
+  ld (argument), a
 
   ld a, $C0            ; $C0 => Command HMMV
   ld (command), a
@@ -55,6 +55,7 @@ execute_hmmm:
 wait_vdp_ready:
   ; 1. Tell VDP we want to read status register 2
   ld a, 2
+  di
   out (VDP_CONTROL_PORT), a
   ld a, 15 + 128                ; Register #15 + Write Flag
   out (VDP_CONTROL_PORT), a
@@ -71,6 +72,34 @@ wait_vdp_ready:
   xor a
   out (VDP_CONTROL_PORT), a
   ld a, 15 + 128
+  out (VDP_CONTROL_PORT), a
+  ei
+  ret
+
+; ==============================================================================
+; Routine: flip_page
+; Description: Toggles the display between Page 0 and Page 1.
+;              Updates Register #2 and flips the 'active_page' variable.
+; ==============================================================================
+flip_page:
+  ld a, (active_page)
+  or a
+  jr nz, .show_page_0
+
+.show_page_1:
+  ld a, 1
+  ld (active_page), a      ; Mark Page 1 as the visible one
+  ld a, $3F                ; Value for Reg #2 to point to VRAM $8000
+  jr .update_vdp
+
+.show_page_0:
+  xor a
+  ld (active_page), a      ; Mark Page 0 as the visible one
+  ld a, $1F                ; Value for Reg #2 to point to VRAM $0000
+
+.update_vdp:
+  out (VDP_CONTROL_PORT), a  ; Send value to VDP
+  ld a, 2 + 128              ; Write to Register #2
   out (VDP_CONTROL_PORT), a
   ret
 

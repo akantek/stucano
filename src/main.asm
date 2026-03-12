@@ -7,13 +7,27 @@ main:
 
 demo:
   ; Init
+  di
   call ENASCR
   ei
+
+  ; Start page flipping
+  ld hl, page_ready_flip
+  ld (hl), 1
 
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
-  ; Update VRAM here
+
+  ; Check if next page is ready to flip
+  ld a, (page_ready_flip)
+  or a
+  jr z, .skip_flip_page  ; If not ready (0), skip flipping
+  call flip_page
+  xor a
+  ld (page_ready_flip), a
+.skip_flip_page:
+
 .vblank_trace_end:
 
   ; frame_count++
@@ -51,7 +65,8 @@ boot:
 
   ; Install VBlank hook
   call install_vblank_hook
-  
+  ei
+   
   ; Clean VRAM page 1 for double buffering
   ld a, 1
   call clear_vram_page
@@ -60,9 +75,11 @@ boot:
   ret
 
 ; --- RAM VARIABLES ---
-OLD_HTIMI:      equ $C000  ; 5 Bytes ($C000-$C004)
-vsync_flag:     equ $C005  ; 1 Byte
-frame_count:    equ $C006  ; 1 Byte
+OLD_HTIMI:       equ $C000  ; 5 Bytes ($C000-$C004)
+vsync_flag:      equ $C005  ; 1 Byte
+frame_count:     equ $C006  ; 1 Byte
+active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
+page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 
 ; ---------------------------------------------------------
 ; HMMM Data Template (15 bytes)
@@ -73,10 +90,9 @@ source_x:           equ $C100  ; 2 bytes (R#32, 33)
 source_y:           equ $C102  ; 2 bytes (R#34, 35)
 dest_x:             equ $C104  ; 2 bytes (R#36, 37)
 dest_y:             equ $C106  ; 2 bytes (R#38, 39)
-width:              equ $C118  ; 2 bytes (R#40, 41)
-height:             equ $C120  ; 2 bytes (R#42, 43)
-color:              equ $C121  ; 1 byte  (R#44)
-argument:           equ $C122  ; 1 byte  (R#45)
-command:            equ $C123  ; 1 byte  (R#46)
-
+width:              equ $C108  ; 2 bytes (R#40, 41)
+height:             equ $C10A  ; 2 bytes (R#42, 43)
+color:              equ $C10C  ; 1 byte  (R#44)
+argument:           equ $C10D  ; 1 byte  (R#45)
+command:            equ $C10E  ; 1 byte  (R#46)
 
