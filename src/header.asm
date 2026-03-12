@@ -16,6 +16,32 @@ BAKCLR:  equ $F3EA  ; Background Color Storage
 BDRCLR:  equ $F3EB  ; Border Color Storage
 HTIMI:   equ $FD9F  ; Hook: VBLANK Interrupt Handler
 
+; --- VDP (Video Display Processor) Ports ---
+VDP_DATA_PORT:          equ $98  ; VRAM Data Read/Write
+VDP_CONTROL_PORT:       equ $99  ; Register Write / Status Read
+VDP_PALETTE_PORT:       equ $9A  ; Palette Register Write
+VDP_INDIRECT_PORT:      equ $9B  ; VDP Command Engine / Indirect Register Write
+
+; --- VDP Constants & Shadow RAM ---
+RG1SAV:           equ $F3E0       ; Shadow RAM for VDP Register 1
+PAGE1_BANK:       equ 1
+PAGE2_BANK:       equ 2           ; Logic number for VRAM Page 2 (Hidden)
+PAGE0_Y_OFFSET:   equ 0
+PAGE1_Y_OFFSET:   equ 256
+PAGE2_Y_OFFSET:   equ 512
+PAGE2_VRAM_ADDR:  equ PAGE2_Y_OFFSET * 128  ; This equals $10000 (65536)
+
+; --- Screen 5 Sprite Tables (Default Locations) ---
+; Note: These are standard for Screen 5 but can be moved via registers.
+VRAM_SPR_COLORS:   equ $7400       ; Sprite Color Table (SCT)
+VRAM_SPR_ATTRIBS:  equ $7600       ; Sprite Attribute Table (SAT)
+VRAM_SPR_PATTERNS: equ $7800       ; Sprite Pattern Generator (SPG)
+
+; Standard VRAM address for Sprite Patterns in SCREEN 5
+; (Bank 7, Address $0000 -> Physical $1C000)
+SPRITE_VRAM_BANK:  equ 1
+SPRITE_VRAM_ADDR:  equ $0000
+
 ; --- MSX Colors ---
 TRANSPARENT:  equ 0
 BLACK:        equ 1

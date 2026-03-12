@@ -6,7 +6,10 @@ main:
   jr demo
 
 demo:
-  ; Init variables
+  ; Init
+  call ENASCR
+  ei
+
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
@@ -43,12 +46,37 @@ boot:
   xor a
   ld (CLIKSW), a  ; Set Click Switch ($F3DB) to 0
 
+  ; SCREEN OFF
+  call DISSCR
+
+  ; Install VBlank hook
   call install_vblank_hook
-  ei
+  
+  ; Clean VRAM page 1 for double buffering
+  ld a, 1
+  call clear_vram_page
+  call wait_vdp_ready
+
   ret
 
 ; --- RAM VARIABLES ---
 OLD_HTIMI:      equ $C000  ; 5 Bytes ($C000-$C004)
 vsync_flag:     equ $C005  ; 1 Byte
 frame_count:    equ $C006  ; 1 Byte
+
+; ---------------------------------------------------------
+; HMMM Data Template (15 bytes)
+; This maps exactly to VDP Registers 32 through 46
+; ---------------------------------------------------------
+hmmm_command_table: equ $C100
+source_x:           equ $C100  ; 2 bytes (R#32, 33)
+source_y:           equ $C102  ; 2 bytes (R#34, 35)
+dest_x:             equ $C104  ; 2 bytes (R#36, 37)
+dest_y:             equ $C106  ; 2 bytes (R#38, 39)
+width:              equ $C118  ; 2 bytes (R#40, 41)
+height:             equ $C120  ; 2 bytes (R#42, 43)
+color:              equ $C121  ; 1 byte  (R#44)
+argument:           equ $C122  ; 1 byte  (R#45)
+command:            equ $C123  ; 1 byte  (R#46)
+
 
