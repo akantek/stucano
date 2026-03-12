@@ -1,6 +1,22 @@
 main:
   call boot
+  jr demo
+
+demo:
+  ; Init variables
 .game_loop:
+  call wait_vsync        ; Spin until vblank is fired
+
+  ld hl, frame_count     ; frame_count++
+  inc (hl)
+  ld a, (hl)
+.vblank_trace_start:
+  ; if (frame_count == 60) {beep! && frame_count = 0
+  cp 60
+  jr nz, .vblank_trace_end
+  ld (hl), 0
+  call BEEP
+.vblank_trace_end:
   jr .game_loop
 
 boot:
@@ -20,5 +36,13 @@ boot:
   xor a
   ld (CLIKSW), a  ; Set Click Switch ($F3DB) to 0
 
+  di
+  call install_vblank_hook
+  ei
   ret
+
+; --- RAM VARIABLES ---
+OLD_HTIMI:      equ $C000  ; 5 Bytes ($C000-$C004)
+vsync_flag:     equ $C005  ; 1 Byte
+frame_count:    equ $C006  ; 1 Byte
 

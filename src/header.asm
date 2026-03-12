@@ -3,6 +3,7 @@
 ; ==============================================================================
 
 ; --- MSX BIOS Entry Points ---
+BEEP:    equ $00C0  ; Used for debugging only
 DISSCR:  equ $0041  ; Disable screen display
 ENASCR:  equ $0044  ; Enable screen display
 CHGMOD:  equ $005F  ; Change VDP Screen Mode (Input: A)
@@ -13,6 +14,7 @@ CLIKSW:  equ $F3DB  ; Key Click Switch (0=Off, 1=On)
 FORCLR:  equ $F3E9  ; Foreground Color Storage
 BAKCLR:  equ $F3EA  ; Background Color Storage
 BDRCLR:  equ $F3EB  ; Border Color Storage
+HTIMI:   equ $FD9F  ; Hook: VBLANK Interrupt Handler
 
 ; --- MSX Colors ---
 TRANSPARENT:  equ 0

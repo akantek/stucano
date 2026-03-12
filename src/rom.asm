@@ -6,6 +6,7 @@ header:
   dw 0, 0, 0
   dw 0, 0, 0
 include "header.asm"
+include "vblank.asm"
 include "main.asm"
   ds $c000 - $, 0
 
