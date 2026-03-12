@@ -6,17 +6,20 @@ demo:
   ; Init variables
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
-
-  ld hl, frame_count     ; frame_count++
-  inc (hl)
-  ld a, (hl)
 .vblank_trace_start:
-  ; if (frame_count == 60) {beep! && frame_count = 0
+  ; Update VRAM here
+.vblank_trace_end:
+
+  ; frame_count++
+  ld hl, frame_count
+  inc (hl)
+  
+  ; if (frame_count == 60) {beep! && frame_count = 0}
+  ld a, (hl)
   cp 60
   jr nz, .vblank_trace_end
   ld (hl), 0
   call BEEP
-.vblank_trace_end:
   jr .game_loop
 
 boot:
