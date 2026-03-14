@@ -44,48 +44,8 @@ demo:
 
   ld (hl), 0
   call BEEP
-  
-  ; Update Stars (Parameterized)
-  ld a, (stars_flag)
-  or a                    ; Check if stars_flag == 0
-  jr nz, .use_array1
-
-.use_array0:
-  ld hl, stars_array0     ; HL = Array to erase
-  ld de, stars_array1     ; DE = Array to draw
-  ld a, 1                 ; Next state will be 1
-  jr .apply_stars
-
-.use_array1:
-  ld hl, stars_array1     ; HL = Array to erase
-  ld de, stars_array0     ; DE = Array to draw
-  xor a                   ; Next state will be 0 (A = 0)
-
-.apply_stars:
-  ld (stars_flag), a      ; Toggle the flag for the next cycle
-
-  ; Save the 'draw' and 'erase' pointers to the stack
-  push de                 ; Save array to draw (bottom of stack)
-  push hl                 ; Save array to erase (top of stack)
-
-  ; --- Erase Old Stars ---
-  ld c, 0                 ; Target Page 0
-  call erase_stars
-
-  pop hl                  ; Retrieve array to erase again (clears it from stack)
-  ld c, 1                 ; Target Page 1
-  call erase_stars
-
-  ; --- Draw New Stars ---
-  pop hl                  ; Retrieve array to draw (was DE originally)
-  push hl                 ; Put it right back for Page 1
-  ld c, 0                 ; Target Page 0
-  call draw_stars
-
-  pop hl                  ; Retrieve array to draw again (clears it from stack)
-  ld c, 1                 ; Target Page 1
-  call draw_stars
-
+  call flip_stars
+    
   jr .game_loop
 
 
