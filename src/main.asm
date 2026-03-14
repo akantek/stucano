@@ -5,9 +5,20 @@ main:
   call boot
   jr demo
 
+
 demo:
   ; Init
   di
+
+  ; Draw stars
+  ld c, 0                 ; Target Page 0
+  ld hl, stars_array0
+  call draw_stars
+
+  ld c, 1                 ; Target Page 1
+  ld hl, stars_array0
+  call draw_stars    
+
   call ENASCR
   ei
 
@@ -18,23 +29,15 @@ demo:
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
-
-  ; Check if next page is ready to flip
-  ld a, (page_ready_flip)
-  or a
-  jr z, .skip_flip_page  ; If not ready (0), skip flipping
-  call flip_page
-  xor a
-  ld (page_ready_flip), a
-.skip_flip_page:
-
-.vblank_trace_end:
-
   ; frame_count++
   ld hl, frame_count
   inc (hl)
-  
+
+  call flip_page
+.vblank_trace_end:
+
   ; if (frame_count == 60) {beep! && frame_count = 0}
+  ld hl, frame_count
   ld a, (hl)
   cp 60
   jr nz, .game_loop
@@ -42,6 +45,7 @@ demo:
   ld (hl), 0
   call BEEP
   jr .game_loop
+
 
 boot:
   ; COLOR 15,1,1
@@ -74,12 +78,14 @@ boot:
 
   ret
 
+
 ; --- RAM VARIABLES ---
 OLD_HTIMI:       equ $C000  ; 5 Bytes ($C000-$C004)
 vsync_flag:      equ $C005  ; 1 Byte
 frame_count:     equ $C006  ; 1 Byte
 active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
 page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
+stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
 
 ; ---------------------------------------------------------
 ; HMMM Data Template (15 bytes)
