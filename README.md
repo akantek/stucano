@@ -4,13 +4,16 @@ Super Tucano for MSX2+
 
 ### Pasmo Assembler
 
-TBD
+Super Tucano was developed using Pasmo Z80 [cross-assembler](https://pasmo.speccy.org).
 
-### msxpen.com
+** Installing Pasmo on Debian/Ubuntu
 
-TBD
+```bash
+sudo apt update
+sudo apt install pasmo
+``` 
 
-### datacassete.org
+### Resources
 
-TBD
+* [datacassete.org](http://datacassete.org): Amazing library hosting many vintage MSX books, manuals and magazines.
 
