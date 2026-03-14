@@ -19,6 +19,15 @@ demo:
   ld hl, stars_array0
   call draw_stars    
 
+  ; Print strings
+  ; Print the game title at Column 5, Row 2, on Page 0 and Page 1
+  PRINT_AT 10, 10, 0, stucano_title_str
+  PRINT_AT 10, 10, 1, stucano_title_str
+
+  ; Print Kanteko
+  PRINT_AT 10, 12, 0, kanteko_str
+  PRINT_AT 10, 12, 1, kanteko_str
+
   call ENASCR
   ei
 
@@ -74,6 +83,8 @@ boot:
   ei
    
   ; Clean VRAM page 1 for double buffering
+  ; Note: the following code (clear vram + wait vdp)
+  ;   takes around 64.4 milliseconds.
   ld a, 1
   call clear_vram_page
   call wait_vdp_ready
