@@ -89,6 +89,8 @@ boot:
   call clear_vram_page
   call wait_vdp_ready
 
+  ; Set sprite size
+  call enable_16x16_sprites
   ret
 
 

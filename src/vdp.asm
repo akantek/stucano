@@ -1,4 +1,25 @@
 ; ==============================================================================
+; enable_16x16_sprites
+; One-time VDP initialization to set Sprite Size to 16x16 pixels.
+;
+; NOTES:
+;   - Modifies VDP Register 1.
+;   - Updates the RG1SAV BIOS mirror.
+;   - Should be called during startup (boot) sequence.
+;   - Assumes interrupts are disabled (DI) or no VDP activity is occurring.
+; ==============================================================================
+enable_16x16_sprites:
+  ld a, (RG1SAV)             ; Get current Register 1 value from BIOS mirror
+  or $02                     ; Set Bit 1 to Enable 16x16 sprites (0=8x8,1=16x16)
+  ld (RG1SAV), a             ; Update mirror so BIOS remembers the change
+
+  out (VDP_CONTROL_PORT), a  ; Step 1: Send the DATA (latches it in VDP)
+  ld a, 1 + 128              ; Prep Command: Register Index (1) + Write Flag ($80)
+  out (VDP_CONTROL_PORT), a  ; Step 2: Send COMMAND to move latched data into Reg 1
+  ret
+
+
+; ==============================================================================
 ; draw_point: Plots a single pixel using the hardware VDP Command Engine
 ; Inputs:
 ;   HL = X coordinate (0-255)
@@ -19,6 +40,7 @@ draw_point:
   call execute_hmmm    ; Blast the table to the VDP
   call wait_vdp_ready  ; Wait for VDP to finish drawing the dot
   ret
+
 
 ; ==============================================================================
 ; Routine: clear_vram_page
@@ -48,6 +70,7 @@ clear_vram_page:
   call execute_hmmm    ; This routine sends the table to VDP
   ret
 
+
 ; ==============================================================================
 ; Routine:      execute_hmmm
 ; Description:  Sends the 15-byte RAM table to VDP to execute a hardware copy.
@@ -67,8 +90,8 @@ execute_hmmm:
   ld c, VDP_INDIRECT_PORT       ; Use Port $9B for indirect writing
   ld b, 15                      ; We want to send 15 bytes
   otir                          ; Hardware Loop: OUT (C), (HL) / INC HL / DEC B
-
   ret
+
 
 ; ==============================================================================
 ; Routine: wait_vdp_ready
@@ -97,6 +120,7 @@ wait_vdp_ready:
   out (VDP_CONTROL_PORT), a
   ei
   ret
+
 
 ; ==============================================================================
 ; Routine: flip_page
