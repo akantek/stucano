@@ -117,6 +117,17 @@ SPR_PATT_GEN    EQU $1C000  ; 8KB       (Ends at $1DFFF)
       using VDP Register 14 to select and load just one 16KB "bank" of VRAM at
       a time.
 
+| VDP PAGE | CPU BANK | VDP REG #14 | CPU VRAM ADDRESS | EXACT Y-COORDINATES |
+| :--- | :--- | :--- | :--- | :--- |
+| Page 0 | Bank 0 | 0 | 0x00000 - 0x03FFF | 0 to 127 |
+| Page 0 | Bank 1 | 1 | 0x04000 - 0x07FFF | 128 to 255 |
+| Page 1 | Bank 2 | 2 | 0x08000 - 0x0BFFF | 256 to 383 |
+| Page 1 | Bank 3 | 3 | 0x0C000 - 0x0FFFF | 384 to 511 |
+| Page 2 | Bank 4 | 4 | 0x10000 - 0x13FFF | 512 to 639 |
+| Page 2 | Bank 5 | 5 | 0x14000 - 0x17FFF | 640 to 767 |
+| Page 3 | Bank 6 | 6 | 0x18000 - 0x1BFFF | 768 to 895 |
+| Page 3 | Bank 7 | 7 | 0x1C000 - 0x1FFFF | 896 to 1023 |
+
 +==========+==========+=============+=====================+=====================+
 | VDP PAGE | CPU BANK | VDP REG #14 | CPU VRAM ADDRESS    | EXACT Y-COORDINATES |
 +==========+==========+=============+=====================+=====================+
@@ -183,6 +194,17 @@ SPR_PATT_GEN    EQU $1C000  ; 8KB       (Ends at $1DFFF)
 
 ### Registers
 
+| REGISTER | NAME | EXPANDED DESCRIPTION |
+| :--- | :--- | :--- |
+| R#0 | Mode Control 0 | Sets the display mode (G1-G7). Also contains the IE1 bit to enable/disable Line Interrupts. |
+| R#1 | Mode Control 1 | Controls the main display (Blank/Show), enables V-Blank interrupts (IE0), sets sprite size (8x8 or 16x16), and sprite magnification. |
+| R#2 | Pattern Name Table Base Address | Sets the base address of the Name Table. In high-res modes, this points to the start of the image data in VRAM. |
+| R#3 | Color Table Base Address | Sets the base VRAM address for the Color Table. |
+| R#4 | Pattern Generator Base Address | Sets the base VRAM address for the Pattern Generator Table (where tile or character graphics are stored). |
+| R#5 | Sprite Attribute Table Base Address | Sets the base VRAM address for the SAT (Sprite Attribute Table), determining where sprite Y, X, and attributes live. |
+| R#6 | Sprite Pattern Generator Address | Sets the base VRAM address for the Sprite Pattern Generator (where the actual sprite pixels are stored). |
+| R#7 | Backdrop / Text Color | Defines the screen backdrop color (the overscan border). In text modes, it also sets the foreground text color. |
+
 +==========+======================+============================================================+
 | REGISTER | NAME                 | EXPANDED DESCRIPTION                                       |
 +==========+======================+============================================================+
@@ -231,7 +253,8 @@ SetScreen5:
     ret
 ```
 
-* This is the same as
+* CHMOD BIOS also switches to screen 5, but also do other things 
+    like cleaning the page, etc.
 
 ```asm
     ld a, 5             ; Load the number 5 (for SCREEN 5) into register A
