@@ -42,6 +42,11 @@ VRAM_SPR_PATTERNS: equ $7800       ; Sprite Pattern Generator (SPG)
 SPRITE_VRAM_BANK:  equ 1
 SPRITE_VRAM_ADDR:  equ $0000
 
+; --- PPI (Programmable Peripheral Interface) ---
+; Used for Keyboard scanning, Memory mapping, etc.
+PPI_PORT_B:       equ $A9         ; Read: Keyboard Column Status
+PPI_PORT_C:       equ $AA         ; Write: Select Keyboard Row
+
 ; --- MSX Colors ---
 TRANSPARENT:  equ 0
 BLACK:        equ 1

@@ -28,6 +28,9 @@ demo:
   PRINT_AT 10, 12, 0, kanteko_str
   PRINT_AT 10, 12, 1, kanteko_str
 
+  ; Init sprites
+  call initSpriteAttributes
+
   call ENASCR
   ei
 
@@ -38,10 +41,13 @@ demo:
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
+  ; We are now inside V-Blank! Blast data to VRAM immediately.
+
   ; frame_count++
   ld hl, frame_count
   inc (hl)
 
+  call loadSpriteAttributes
   call flip_page
 .vblank_trace_end:
 
@@ -91,6 +97,10 @@ boot:
 
   ; Set sprite size
   call enable_16x16_sprites
+
+  ; Load sprites patterns and colors
+  call loadSpritePatterns
+  call loadSpriteColors
   ret
 
 
@@ -101,6 +111,25 @@ frame_count:     equ $C006  ; 1 Byte
 active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
 page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
+
+; ---------------------------------------------------------
+; Shadow Sprite Attribute Table (SAT) in RAM
+; 1 Sprite = 4 Bytes
+; ---------------------------------------------------------
+shadow_sat:     equ $C020
+
+; MSX helicopter 1 A
+msx_heli1A_y:   equ $C020   ; Byte 4: Y Coordinate
+msx_heli1A_x:   equ $C021   ; Byte 5: X Coordinate
+msx_heli1A_pat: equ $C022   ; Byte 6: Pattern Number
+msx_heli1A_ign: equ $C023   ; Byte 7: ignored
+; MSX helicopter 1 B
+msx_heli1B_y:   equ $C024   ; Byte 8: Y Coordinate
+msx_heli1B_x:   equ $C025   ; Byte 9: X Coordinate
+msx_heli1B_pat: equ $C026   ; Byte 10: Pattern Number
+msx_heli1B_ign: equ $C027   ; Byte 11: ignored
+
+shadow_sat_end: equ $C027   ; End of the 4-byte block
 
 ; ---------------------------------------------------------
 ; HMMM Data Template (15 bytes)

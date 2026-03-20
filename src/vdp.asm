@@ -149,3 +149,100 @@ flip_page:
   out (VDP_CONTROL_PORT), a
   ret
 
+
+; ==============================================================================
+; write_vram_large
+; Transfers a block of data from RAM to VRAM using a 16-bit counter.
+;
+; INPUTS:
+;   HL = Source Address (RAM)
+;   DE = Destination Address (VRAM)
+;   BC = Length (Bytes)
+;   A  = VRAM Bank Number
+;
+; [!] CRITICAL WARNING:
+;   You MUST execute DI (Disable Interrupts) before calling this function.
+;   If an interrupt fires during the VDP address setup, the VDP latch 
+;   will be corrupted, writing data to the wrong address.
+; ==============================================================================
+write_vram_large:
+  push AF                    ; Preserve Bank # (in A) for the first OUT
+
+  ; --- 1. Set VRAM Bank (Reg 14) ---
+  out (VDP_CONTROL_PORT), A  ; Data: Send Bank Number
+  ld  A, 14 or $80           ; CMD:  Register 14 + Write Flag ($80)
+  out (VDP_CONTROL_PORT), A  ; Latch data into Reg 14
+
+  ; --- 2. Set VRAM Address ---
+  pop AF                     ; Clean up stack (value in A is no longer needed)
+  ld  A, E
+  out (VDP_CONTROL_PORT), a  ; Send Low Byte (A0-A7)
+
+  ld  a, d
+  and $3F                    ; Safety: Mask to valid address range
+  or  $40                    ; Set Bit 6: Enable "Write" Mode
+  out (VDP_CONTROL_PORT), a  ; Send High Byte (A8-A13) + Setup VDP for writing
+
+  ; --- 3. Transfer Data ---
+  ; Fixed: Removed 'ld c, port' to preserve BC counter
+
+  ld  a, b
+  or  c
+  ret z                      ; Return immediately if BC (Size) is 0
+
+.write_vram_large_loop:
+  ld  a, (hl)                ; Read byte from RAM
+  out (VDP_DATA_PORT), a     ; Write byte to VDP
+  inc hl                     ; Next RAM address
+  dec bc                     ; Decrement 16-bit counter
+  ld  a, b
+  or  c                      ; Check if BC == 0
+  jr  nz, .write_vram_large_loop
+  ret
+
+
+; ==============================================================================
+; write_vram_fast
+; High-speed VRAM transfer using the Z80 OTIR instruction.
+;
+; INPUTS:
+;   HL = Source Address (RAM)
+;   DE = Destination Address (VRAM)
+;   C  = Length (Low Byte of BC). Max 256 bytes.
+;   A  = VRAM Bank Number
+;
+; NOTES:
+;   - [!] LIMITATION: The counter uses Register B (8-bit). 
+;         Maximum transfer size is 256 bytes. 
+;         If you pass BC > 256, only the lower byte (C) is used.
+;   - SAFETY: This routine handles its own DI/EI internally. 
+;         It is safe to call from anywhere, even if interrupts are enabled.
+; ==============================================================================
+write_vram_fast:
+  push af                    ; Preserve Bank # (in A)
+
+  ; --- 1. Set VRAM Bank (Reg 14) ---
+  di                         ; Disable Interrupts: Critical for VDP latch atomicity
+  out (VDP_CONTROL_PORT), a  ; Data: Send Bank Number
+  ld  a, 14 or $80           ; CMD:  Register 14 + Write Flag
+  out (VDP_CONTROL_PORT), a  ; Latch data into Reg 14
+
+  ; --- 2. Set VRAM Address ---
+  pop af                     ; Clean stack (A not needed)
+  ld  a, e
+  out (VDP_CONTROL_PORT), a  ; Send Low Byte (A0-A7)
+
+  ld  a, d
+  and $3F                    ; Safety: Mask to 14-bit address range
+  or  $40                    ; Set Bit 6: Enable "Write" Mode
+  out (VDP_CONTROL_PORT), a  ; Send High Byte + Setup VDP for writing
+  ei                         ; Enable Interrupts: Safe to resume now
+
+  ; --- 3. Transfer Data (OTIR) ---
+  ; Limitation: OTIR uses 8-bit 'B' counter. Max transfer = 256 bytes.
+  ld  b, c                   ; Move count to B (OTIR requirement)
+  ld  c, VDP_DATA_PORT       ; Set Port to VDP Data ($98)
+
+  otir                       ; Fast Block Output: (HL)->Port(C), HL++, B--
+  ret
+
