@@ -150,6 +150,16 @@ msx_heli1B_y:   equ $C024   ; Byte 8: Y Coordinate
 msx_heli1B_x:   equ $C025   ; Byte 9: X Coordinate
 msx_heli1B_pat: equ $C026   ; Byte 10: Pattern Number
 msx_heli1B_ign: equ $C027   ; Byte 11: ignored
+; MSX helicopter 2 A
+msx_heli2A_y:   equ $C028   ; Byte 4: Y Coordinate
+msx_heli2A_x:   equ $C029   ; Byte 5: X Coordinate
+msx_heli2A_pat: equ $C02A   ; Byte 6: Pattern Number
+msx_heli2A_ign: equ $C02B   ; Byte 7: ignored
+; MSX helicopter 2 B
+msx_heli2B_y:   equ $C02C   ; Byte 8: Y Coordinate
+msx_heli2B_x:   equ $C02D   ; Byte 9: X Coordinate
+msx_heli2B_pat: equ $C02E   ; Byte 10: Pattern Number
+msx_heli2B_ign: equ $C02F   ; Byte 11: ignored
 
 shadow_sat_end: equ $C027   ; End of the 4-byte block
 

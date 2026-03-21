@@ -3,6 +3,14 @@ moveMsxHelicopters:
   dec (hl)
   ld hl, msx_heli1B_x
   dec (hl)
+
+  ld hl, msx_heli2A_x
+  dec (hl)
+  dec (hl)
+  ld hl, msx_heli2B_x
+  dec (hl)
+  dec (hl)
+
   ret
 
 
@@ -26,20 +34,33 @@ updateMsxHeliSpritePattern:
   ld  d, 0            ; <--- Frame A starts at Index 0
   xor a               ; Next State = 0
   ld  (msx_heli_pattern), a
+  ; MSX Helicopter 1
   ld a, 48
   ld (msx_heli1A_pat), a
   add a, 4
   ld (msx_heli1B_pat), a
+  ; MSX Helicopter 2
+  ld a, 56
+  ld (msx_heli2A_pat), a
+  add a, 4
+  ld (msx_heli2B_pat), a
+
   jr  .end_update_msx_heli_pattern
 
 .set_msx_heli_frame_B:
   ld  d, 4
   ld  a, 1            ; Next State = 14
   ld  (msx_heli_pattern), a
+  ; MSX Helicopter 1
   ld a, 56
   ld (msx_heli1A_pat), a
   add a, 4
   ld (msx_heli1B_pat), a
+  ; MSX Helicopter 2
+  ld a, 48
+  ld (msx_heli2A_pat), a
+  add a, 4
+  ld (msx_heli2B_pat), a
   ; Fallthrough to apply
 
 .end_update_msx_heli_pattern:
