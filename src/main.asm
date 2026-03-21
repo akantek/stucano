@@ -47,6 +47,7 @@ demo:
 
   ; Move MSX helicopters
   call moveMsxHelicopters
+  call updateMsxHeliSpritePattern
 
   ; --- Two-Frame Star Twinkle Sync ---
   ld a, (frame_count)     
@@ -79,14 +80,6 @@ demo:
 
 .skip_stars:
   jr .game_loop
-
-
-moveMsxHelicopters:
-  ld hl, msx_heli1A_x
-  dec (hl)
-  ld hl, msx_heli1B_x
-  dec (hl)
-  ret
 
 
 boot:
@@ -136,6 +129,10 @@ frame_count:     equ $C006  ; 1 Byte
 active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
 page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
+
+; MSX Helicopter variables
+msx_heli_frame_counter: equ $C00A  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C00B  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
