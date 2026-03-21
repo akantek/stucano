@@ -41,29 +41,43 @@ demo:
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
-
-  ; We are now inside V-Blank! Blast data to VRAM immediately.
-
-  ; frame_count++
-  ld hl, frame_count
-  inc (hl)
-  ld a, (hl)
-  cp 60
-  jr nz, .skip_flip_stars
-  ld (hl), 0
-  
-  ld c, active_page
-  call flip_stars
-
-.skip_flip_stars:
   call loadSpriteAttributes
   call flip_page
-
 .vblank_trace_end:
 
   ; Move MSX helicopters
   call moveMsxHelicopters
 
+  ; --- Two-Frame Star Twinkle Sync ---
+  ld a, (frame_count)     
+  inc a                   
+  ld (frame_count), a     
+  
+  cp 59                   ; Is it Frame 60?
+  jr z, .sync_frame_1
+  
+  cp 60                   ; Is it Frame 61?
+  jr z, .sync_frame_2
+  
+  jr .skip_stars          ; Otherwise, do nothing
+
+.sync_frame_1:
+  ; Step 1: Flip the global state and update the first hidden page
+  ld a, (stars_flag)
+  xor 1
+  ld (stars_flag), a
+  call update_hidden_stars
+  jr .skip_stars
+
+.sync_frame_2:
+  ; Step 2: The pages have swapped! Update the OTHER hidden page.
+  call update_hidden_stars
+
+  ; Reset the timer for the next second
+  xor a
+  ld (frame_count), a
+
+.skip_stars:
   jr .game_loop
 
 

@@ -1,43 +1,30 @@
-flip_stars:
-  ; Update Stars (Parameterized)
+; ==============================================================================
+; Routine: update_hidden_stars
+; Description: Erases the old stars and draws the new stars ONLY on the 
+;              page that is currently not being displayed by the VDP.
+; ==============================================================================
+update_hidden_stars:
+  ; 1. Calculate the hidden page (active_page XOR 1)
+  ld a, (active_page)
+  xor 1                   ; If active is 0, becomes 1. If 1, becomes 0.
+  ld c, a                 ; C now holds the Target Page!
+
+  ; 2. Check which array is currently active
   ld a, (stars_flag)
-  or a                    ; Check if stars_flag == 0
-  jr nz, .use_array1
+  or a
+  jr nz, .draw_array1
 
-.use_array0:
-  ld hl, stars_array0     ; HL = Array to erase
-  ld de, stars_array1     ; DE = Array to draw
-  ld a, 1                 ; Next state will be 1
-  jr .apply_stars
-
-.use_array1:
-  ld hl, stars_array1     ; HL = Array to erase
-  ld de, stars_array0     ; DE = Array to draw
-  xor a                   ; Next state will be 0 (A = 0)
-
-.apply_stars:
-  ld (stars_flag), a      ; Toggle the flag for the next cycle
-
-  ; Save the 'draw' and 'erase' pointers to the stack
-  push de                 ; Save array to draw (bottom of stack)
-  push hl                 ; Save array to erase (top of stack)
-
-  ; --- Erase Old Stars ---
-  ld c, 0                 ; Target Page 0
+.draw_array0:
+  ld hl, stars_array1     ; HL = Array to erase (the OLD one)
   call erase_stars
-
-  pop hl                  ; Retrieve array to erase again (clears it from stack)
-  ld c, 1                 ; Target Page 1
-  call erase_stars
-
-  ; --- Draw New Stars ---
-  pop hl                  ; Retrieve array to draw (was DE originally)
-  push hl                 ; Put it right back for Page 1
-  ld c, 0                 ; Target Page 0
+  ld hl, stars_array0     ; HL = Array to draw (the NEW one)
   call draw_stars
+  ret
 
-  pop hl                  ; Retrieve array to draw again (clears it from stack)
-  ld c, 1                 ; Target Page 1
+.draw_array1:
+  ld hl, stars_array0     ; HL = Array to erase (the OLD one)
+  call erase_stars
+  ld hl, stars_array1     ; HL = Array to draw (the NEW one)
   call draw_stars
   ret
 
