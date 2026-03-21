@@ -128,7 +128,7 @@ player_helicopter_colors_end:
 
 msx_helicopter_colors_start:
 ; MSX Helicopter Left Sprite
-db 4,12,4,12, 13,12,12,12, 12,12,12,12, 12,12,12,12
+db 4,12,4,12, 15,12,12,12, 12,12,12,12, 12,12,12,12
 
 ; MSX Helicopter Right Sprite
 db $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44

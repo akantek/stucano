@@ -40,6 +40,10 @@ demo:
   ; Draw playfield on both pages 0 and 1
   call drawPlayfield
 
+  ; load palette
+  ld HL, stucano_palette
+  call loadPalette
+
   call ENASCR
   ei
 

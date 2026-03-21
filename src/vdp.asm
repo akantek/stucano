@@ -223,3 +223,30 @@ write_vram_fast:
   otir                       ; Fast Block Output: (HL)->Port(C), HL++, B--
   ret
 
+
+; ==============================================================================
+; LoadPalette
+; Uploads a 16-color palette to the VDP.
+;
+; INPUTS:
+;   HL = Address of the 32-byte palette data
+;
+; [!] CRITICAL WARNING:
+;   You MUST execute DI (Disable Interrupts) before calling this function.
+;   If an interrupt fires while setting the Palette Pointer (Register 16),
+;   the VDP state will become corrupted.
+; ==============================================================================
+loadPalette:
+  ; 1. Tell VDP we want to start writing at Palette Index 0
+  xor a
+  out (VDP_CONTROL_PORT), a
+  ld a, 16 or $80           ; Command: Select Register 16 (Palette Pointer)
+  out (VDP_CONTROL_PORT), a
+
+  ; 2. Send 32 bytes of data to the Palette Port ($9A)
+  ;    (16 colors * 2 bytes per color = 32 bytes)
+  ld c, VDP_PALETTE_PORT
+  ld b, 32
+  otir
+  ret
+

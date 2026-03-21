@@ -20,6 +20,7 @@ include "sprites.asm"
 include "player.asm"
 include "msx_helicopters.asm"
 include "playfield.asm"
+include "palettes.asm"
 include "main.asm"
   ds $c000 - $, 0
 
