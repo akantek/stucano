@@ -37,6 +37,9 @@ demo:
   ; Init sprites
   call initSpriteAttributes
 
+  ; Draw playfield on both pages 0 and 1
+  call drawPlayfield
+
   call ENASCR
   ei
 
@@ -131,6 +134,9 @@ boot:
   ; Load sprites patterns and colors
   call loadSpritePatterns
   call loadSpriteColors
+
+  ; Load tiles
+  call loadTilesheet
   ret
 
 
