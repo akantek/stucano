@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Define your paths and script name here
+PYTHON_SCRIPT="tiles.py" # Change this to the actual name of your Python script
+ASSETS_DIR="../assets/tiles"
+OUTPUT_FILE="../src/tilesheet.asm"
+
+# 1. Initialize the output file (overwrites if it already exists)
+echo "; Auto-generated tilesheet - don't edit" > "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# 2. Helper function to process each file and append it
+process_tile() {
+    local filename=$1
+    local map_type=$2
+    
+    # Extract just the base name without the .txt extension for the label
+    local label_name=$(basename "$filename" .txt)
+
+    # Write the label (e.g., tile8:)
+    echo "${label_name}:" >> "$OUTPUT_FILE"
+    
+    # Run the python script and append the 'db' lines
+    python3 "$PYTHON_SCRIPT" "${ASSETS_DIR}/${filename}" "$map_type" >> "$OUTPUT_FILE"
+    
+    # Add an empty line for readability
+    echo "" >> "$OUTPUT_FILE"
+}
+
+# 3. Process each file with the correct mapping
+process_tile "tile8.txt" "floor"
+process_tile "tileE.txt" "floor"
+process_tile "tank_cannon.txt" "tank"
+process_tile "tank_right.txt" "tank"
+process_tile "tank_left.txt" "tank"
+
+echo "Success! Tilesheet generated at $OUTPUT_FILE"
