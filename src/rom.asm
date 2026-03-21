@@ -15,6 +15,7 @@ include "font.asm"
 include "strings.asm"
 include "spritesheet.asm"
 include "sprites.asm"
+include "player.asm"
 include "msx_helicopters.asm"
 include "main.asm"
   ds $c000 - $, 0

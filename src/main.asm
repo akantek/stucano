@@ -46,10 +46,15 @@ demo:
   call loadSpriteAttributes
   call flip_page
 .vblank_trace_end:
+  ; Move player
+  call move_player
 
   ; Move MSX helicopters
   call moveMsxHelicopters
   call updateMsxHeliSpritePattern
+
+  ; Update SAT with player and enemies location
+  call update_player_sat
 
   ; --- Two-Frame Star Twinkle Sync ---
   ld a, (frame_count)     
@@ -132,9 +137,13 @@ active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
 page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
 
+; Player variables
+player_x:    equ $C00A
+player_y:    equ $C00B
+
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C00A  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C00B  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C00C  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C00D  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
