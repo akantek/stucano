@@ -26,7 +26,7 @@ updateMsxHeliSpritePattern:
   ld  d, 0            ; <--- Frame A starts at Index 0
   xor a               ; Next State = 0
   ld  (msx_heli_pattern), a
-  ld a, 0
+  ld a, 48
   ld (msx_heli1A_pat), a
   add a, 4
   ld (msx_heli1B_pat), a
@@ -36,7 +36,7 @@ updateMsxHeliSpritePattern:
   ld  d, 4
   ld  a, 1            ; Next State = 14
   ld  (msx_heli_pattern), a
-  ld a, 8
+  ld a, 56
   ld (msx_heli1A_pat), a
   add a, 4
   ld (msx_heli1B_pat), a
