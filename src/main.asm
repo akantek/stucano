@@ -12,6 +12,10 @@ demo:
   ; Init
   di
 
+  ; Initialize vars
+  ld hl, player_anim_frame_counter
+  ld (hl), 4
+
   ; Draw stars
   ld c, 0                 ; Target Page 0
   ld hl, stars_array0
@@ -48,7 +52,8 @@ demo:
 .vblank_trace_end:
   ; Move player
   call move_player
-
+  call animatePlayerSprite
+  
   ; Move MSX helicopters
   call moveMsxHelicopters
   call updateMsxHeliSpritePattern
@@ -138,12 +143,14 @@ page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
 
 ; Player variables
-player_x:    equ $C00A
-player_y:    equ $C00B
+player_x:                   equ $C00A
+player_y:                   equ $C00B
+player_anim_frame_counter:  equ $C00C
+player_anim_state:          equ $C00D
 
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C00C  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C00D  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C00E  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C00F  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
