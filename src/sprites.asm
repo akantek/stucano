@@ -1,4 +1,4 @@
-NUM_SPRITES:    equ 4
+NUM_SPRITES:    equ 8 
 
 loadSpritePatterns:
   ld HL, sprite_patterns_start
@@ -10,15 +10,29 @@ loadSpritePatterns:
 
 loadSpriteColors:
   ; --- Load colors for Sprites 0 & 1 ---
+  ld hl, player_helicopter_colors_start   ; Source RAM
+  ld de, VRAM_SPR_COLORS                  ; Dest VRAM ($7400)
+  ld a, SPRITE_VRAM_BANK                  ; Bank 1
+  ld c, player_helicopter_colors_end - player_helicopter_colors_start
+  call write_vram_fast
+
+  ; --- Load colors for Sprites 2 & 3 ---
+  ld hl, player_helicopter_colors_start   ; Source RAM
+  ld de, VRAM_SPR_COLORS + 32             ; Dest VRAM ($7400)
+  ld a, SPRITE_VRAM_BANK                  ; Bank 1
+  ld c, player_helicopter_colors_end - player_helicopter_colors_start
+  call write_vram_fast
+
+  ; --- Load colors for Sprites 4 & 5 ---
   ld hl, msx_helicopter_colors_start   ; Source RAM
-  ld de, VRAM_SPR_COLORS               ; Dest VRAM ($7400)
+  ld de, VRAM_SPR_COLORS + 64          ; Dest VRAM ($7400)
   ld a, SPRITE_VRAM_BANK               ; Bank 1
   ld c, msx_helicopter_colors_end - msx_helicopter_colors_start ; Length in C (max 256)
   call write_vram_fast
 
-  ; --- Load colors for Sprites 2 & 3 ---
+  ; --- Load colors for Sprites 6 & 7 ---
   ld hl, msx_helicopter_colors_start   ; Source RAM (re-use the same colors)
-  ld de, VRAM_SPR_COLORS + 32          ; Dest VRAM offset by 32 bytes ($7420)
+  ld de, VRAM_SPR_COLORS + 96          ; Dest VRAM offset by 32 bytes ($7420)
   ld a, SPRITE_VRAM_BANK               ; Bank 1
   ld c, msx_helicopter_colors_end - msx_helicopter_colors_start ; Length in C (max 256)
   call write_vram_fast
@@ -70,21 +84,48 @@ initSpriteAttributes:
 
 
 init_sprite_attributes:
-  ; Sprite 0: MSX Helicopter left facing
+  ; Sprite 0: Right Facing - Layer 1 (White)
+  ; Y ($60=96), X ($70=112), Pattern 0
+  db PLAYER_Y_MIN + 10, $78, 0, 0
+
+  ; Sprite 1: Right Facing - Layer 2 (Red)
+  ; Same X,Y as above to overlay them
+  db PLAYER_Y_MIN + 10, $78, 4, 0 
+
+  ; Sprite 2: Left Facing - Layer 1 (White)
+  ; Y ($60=96), X ($90=144), Pattern 8
+  db PLAYER_Y_MIN + 10, $86, 8, 0
+
+  ; Sprite 3: Left Facing - Layer 2 (Red)
+  ; Same X,Y as above to overlay them
+  db PLAYER_Y_MIN + 10, $86, 12, 0
+
+  ; Sprite 4: MSX Helicopter left facing
   db 60, 188, 48, 0
 
-  ; Sprite 1: MSX Helicopter right facing
+  ; Sprite 5: MSX Helicopter right facing
   db 60, 188 + 14, 52, 0
 
-  ; Sprite 2: MSX Helicopter left facing
+  ; Sprite 6: MSX Helicopter left facing
   db 120, 188, 56, 0
 
-  ; Sprite 3: MSX Helicopter right facing
+  ; Sprite 7: MSX Helicopter right facing
   db 120, 188 + 14, 60, 0
   ret
 
 
 sprite_color_data_start:
+player_helicopter_colors_start:
+; Sprite 0
+db 12,12,12,12, 8,8,8,8, 8,8,8,8, 8,8,8,8
+; Sprite 1
+db $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44
+; Sprite 2
+db 8,8,8,8, 8,8,8,8, 8,8,8,8, 8,8,8,8
+; Sprite 3
+db $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44
+player_helicopter_colors_end:
+
 msx_helicopter_colors_start:
 ; MSX Helicopter Left Sprite
 db 4,12,4,12, 13,12,12,12, 12,12,12,12, 12,12,12,12

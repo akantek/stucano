@@ -1,3 +1,5 @@
+PLAYER_Y_MIN:   equ 24
+
 main:
   di
   ld sp, $f380  ; ROM standard SP initialization (move to top-of-RAM)
@@ -140,28 +142,49 @@ msx_heli_pattern:       equ $C00B  ; 1 Byte - MSX helicopter sprite pattern
 ; ---------------------------------------------------------
 shadow_sat:     equ $C020
 
-; MSX helicopter 1 A
-msx_heli1A_y:   equ $C020   ; Byte 4: Y Coordinate
-msx_heli1A_x:   equ $C021   ; Byte 5: X Coordinate
-msx_heli1A_pat: equ $C022   ; Byte 6: Pattern Number
-msx_heli1A_ign: equ $C023   ; Byte 7: ignored
-; MSX helicopter 1 B
-msx_heli1B_y:   equ $C024   ; Byte 8: Y Coordinate
-msx_heli1B_x:   equ $C025   ; Byte 9: X Coordinate
-msx_heli1B_pat: equ $C026   ; Byte 10: Pattern Number
-msx_heli1B_ign: equ $C027   ; Byte 11: ignored
-; MSX helicopter 2 A
-msx_heli2A_y:   equ $C028   ; Byte 4: Y Coordinate
-msx_heli2A_x:   equ $C029   ; Byte 5: X Coordinate
-msx_heli2A_pat: equ $C02A   ; Byte 6: Pattern Number
-msx_heli2A_ign: equ $C02B   ; Byte 7: ignored
-; MSX helicopter 2 B
-msx_heli2B_y:   equ $C02C   ; Byte 8: Y Coordinate
-msx_heli2B_x:   equ $C02D   ; Byte 9: X Coordinate
-msx_heli2B_pat: equ $C02E   ; Byte 10: Pattern Number
-msx_heli2B_ign: equ $C02F   ; Byte 11: ignored
+; Player sprite A
+playerA_y:       equ $C020   ; Byte 0: Y Coordinate
+playerA_x:       equ $C021   ; Byte 1: X Coordinate
+playerA_pat:     equ $C022   ; Byte 2: Pattern Number
+playerA_ignored: equ $C023   ; Byte 3: ignored
+; Player sprite B
+playerB_y:       equ $C024   ; Byte 0: Y Coordinate
+playerB_x:       equ $C025   ; Byte 1: X Coordinate
+playerB_pat:     equ $C026   ; Byte 2: Pattern Number
+playerB_ignored: equ $C027   ; Byte 3: ignored
+; Player sprite C
+playerC_y:       equ $C028   ; Byte 0: Y Coordinate
+playerC_x:       equ $C029   ; Byte 1: X Coordinate
+playerC_pat:     equ $C02A   ; Byte 2: Pattern Number
+playerC_ignored: equ $C02B   ; Byte 3: ignored
+; Player sprite D
+playerD_y:       equ $C02C   ; Byte 0: Y Coordinate
+playerD_x:       equ $C02D   ; Byte 1: X Coordinate
+playerD_pat:     equ $C02E   ; Byte 2: Pattern Number
+playerD_ignored: equ $C02F   ; Byte 3: ignored
 
-shadow_sat_end: equ $C027   ; End of the 4-byte block
+; MSX helicopter 1 A
+msx_heli1A_y:   equ $C030   ; Byte 4: Y Coordinate
+msx_heli1A_x:   equ $C031   ; Byte 5: X Coordinate
+msx_heli1A_pat: equ $C032   ; Byte 6: Pattern Number
+msx_heli1A_ign: equ $C033   ; Byte 7: ignored
+; MSX helicopter 1 B
+msx_heli1B_y:   equ $C034   ; Byte 8: Y Coordinate
+msx_heli1B_x:   equ $C035   ; Byte 9: X Coordinate
+msx_heli1B_pat: equ $C036   ; Byte 10: Pattern Number
+msx_heli1B_ign: equ $C037   ; Byte 11: ignored
+; MSX helicopter 2 A
+msx_heli2A_y:   equ $C038   ; Byte 4: Y Coordinate
+msx_heli2A_x:   equ $C039   ; Byte 5: X Coordinate
+msx_heli2A_pat: equ $C03A   ; Byte 6: Pattern Number
+msx_heli2A_ign: equ $C03B   ; Byte 7: ignored
+; MSX helicopter 2 B
+msx_heli2B_y:   equ $C03C   ; Byte 8: Y Coordinate
+msx_heli2B_x:   equ $C03D   ; Byte 9: X Coordinate
+msx_heli2B_pat: equ $C03E   ; Byte 10: Pattern Number
+msx_heli2B_ign: equ $C03F   ; Byte 11: ignored
+
+shadow_sat_end: equ $C03F   ; End of the 4-byte block
 
 ; ---------------------------------------------------------
 ; HMMM Data Template (15 bytes)
