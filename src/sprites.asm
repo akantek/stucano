@@ -62,10 +62,10 @@ initSpriteAttributes:
 
 init_sprite_attributes:
   ; Sprite 0: MSX Helicopter left facing
-  db 80, 188, 0, 0
+  db 60, 188, 0, 0
 
   ; Sprite 1: MSX Helicopter right facing
-  db 80, 188 + 14, 4, 0
+  db 60, 188 + 14, 4, 0
   ret
 
 

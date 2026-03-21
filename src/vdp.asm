@@ -20,29 +20,6 @@ enable_16x16_sprites:
 
 
 ; ==============================================================================
-; draw_point: Plots a single pixel using the hardware VDP Command Engine
-; Inputs:
-;   HL = X coordinate (0-255)
-;   DE = Y coordinate (0-211 for Page 0, 256-467 for Page 1)
-;   A  = Color (0-15)
-; ==============================================================================
-draw_point:
-  ld (dest_x), hl      ; DX (Destination X)
-  ld (dest_y), de      ; DY (Destination Y)
-  ld (color), a        ; CLR (Color)
-
-  xor a
-  ld (argument), a     ; ARG = 0 (Default direction, no logical operations like XOR/OR)
-
-  ld a, $50            ; Command $50 is PSET
-  ld (command), a
-
-  call execute_hmmm    ; Blast the table to the VDP
-  call wait_vdp_ready  ; Wait for VDP to finish drawing the dot
-  ret
-
-
-; ==============================================================================
 ; Routine: clear_vram_page
 ; Input:   A = Page Number (0, 1, 2, or 3)
 ; ==============================================================================

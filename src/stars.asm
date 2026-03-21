@@ -1,79 +1,3 @@
-; ==============================================================================
-; Routine: draw_stars
-; Input:   HL = the array of stars to draw (draw_stars0 or draw_stars1)
-; Input:   C = Target Page (0 or 1)
-; ==============================================================================
-draw_stars:
-  ; ix = hl (ix now contains the address of the stars array)
-  push hl
-  pop ix
-
-.draw_stars_loop:
-  ; --- Check for Terminator ---
-  ld a, (ix+0)           ; Read the X coordinate
-  cp 255                 ; Is it -1 ($FF)?
-  ret z                  ; If yes, exit!
-
-  ; --- Load Coordinates and Color ---
-  ld l, a
-  ld h, 0                ; HL = X coordinate
-
-  ld e, (ix+1)           ; Read the Y coordinate (low byte)
-  ld d, c                ; DE = Y coordinate. D gets the Page Number (0 or 1)!
-
-  ld a, (ix+2)           ; Read the Color
-
-  ; --- Draw to the Targeted Page ---
-  push bc                ; Save the page parameter (C)
-  push ix                ; Save the array pointer
-  
-  call draw_point        ; Plot the pixel
-
-  ; --- Move to Next Star ---
-  pop ix                 ; Restore our array pointer
-  pop bc                 ; Restore our page parameter
-  
-  inc ix                 ; Move to next X
-  inc ix                 ; Move to next Y
-  inc ix                 ; Move to next Color
-  jr .draw_stars_loop    ; Jump back to the top of the loop
-
-
-; ==============================================================================
-; Routine: erase_stars
-; Input:   C = Target Page (0 or 1)
-;          HL = Pointer to the star array data
-; ==============================================================================
-erase_stars:
-  push hl
-  pop ix                 
-
-.erase_stars_loop:
-  ld a, (ix+0)           ; Read X
-  cp 255                 ; Terminator?
-  ret z                  
-
-  ld l, a
-  ld h, 0                ; HL = X
-
-  ld e, (ix+1)           ; Read Y
-  ld d, c                ; D = Page (0 or 1)
-
-  ; FORCE COLOR TO BLACK (0) TO ERASE
-  xor a                  
-
-  push bc                
-  push ix                
-  call draw_point        ; Draw a black pixel over the old star
-  pop ix                 
-  pop bc                 
-  
-  inc ix                 
-  inc ix                 
-  inc ix                 
-  jr .erase_stars_loop
-
-
 flip_stars:
   ; Update Stars (Parameterized)
   ld a, (stars_flag)
@@ -116,6 +40,132 @@ flip_stars:
   ld c, 1                 ; Target Page 1
   call draw_stars
   ret
+
+
+; ==============================================================================
+; Routine: erase_stars (Optimized)
+; Input:   C = Target Page (0 or 1)
+;          HL = Pointer to the star array data
+; ==============================================================================
+erase_stars:
+  push hl
+  pop ix                 
+
+.erase_stars_loop:
+  ld l, (ix+0)               ; Read X
+  ld a, l
+  cp 255                     ; Terminator?
+  ret z                      
+
+  ld e, (ix+1)               ; Read Y
+  ld d, c                    ; D = Page (0 or 1)
+  ld b, 0                    ; FORCE COLOR TO BLACK (0) TO ERASE
+
+  call wait_vdp_ready
+
+  ; --- 1. Set DX (R#36 & R#37) ---
+  ld a, l
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 36
+  out (VDP_CONTROL_PORT), a
+  
+  xor a
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 37
+  out (VDP_CONTROL_PORT), a
+
+  ; --- 2. Set DY (R#38 & R#39) ---
+  ld a, e
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 38
+  out (VDP_CONTROL_PORT), a
+  
+  ld a, d
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 39
+  out (VDP_CONTROL_PORT), a
+
+  ; --- 3. Set Color (R#44) ---
+  ld a, b
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 44
+  out (VDP_CONTROL_PORT), a
+
+  ; --- 4. Execute PSET Command (R#46) ---
+  ld a, $50
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 46
+  out (VDP_CONTROL_PORT), a
+
+  inc ix
+  inc ix
+  inc ix
+  jr .erase_stars_loop
+
+
+; ==============================================================================
+; Routine: draw_stars (Optimized)
+; Input:   HL = the array of stars to draw
+; Input:   C = Target Page (0 or 1)
+; ==============================================================================
+draw_stars:
+  push hl
+  pop ix
+
+.draw_stars_loop:
+  ld l, (ix+0)               ; Read X coordinate
+  ld a, l
+  cp 255                     ; Check for Terminator
+  ret z                      ; If yes, exit!
+
+  ld e, (ix+1)               ; Read Y coordinate
+  ld d, c                    ; D gets the Page Number (0 or 1)
+  ld b, (ix+2)               ; Read Color
+
+  ; Wait for previous VDP command to finish BEFORE sending new ones.
+  ; By doing this here, the CPU was able to read the array data in parallel 
+  ; while the VDP was finishing the last star!
+  call wait_vdp_ready
+
+  ; --- 1. Set DX (Destination X: R#36 & R#37) ---
+  ld a, l
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 36
+  out (VDP_CONTROL_PORT), a
+  
+  xor a                      ; X High byte is always 0 (stars are < 256 wide)
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 37
+  out (VDP_CONTROL_PORT), a
+
+  ; --- 2. Set DY (Destination Y: R#38 & R#39) ---
+  ld a, e
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 38
+  out (VDP_CONTROL_PORT), a
+  
+  ld a, d                    ; Page number acts directly as Y High Byte!
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 39
+  out (VDP_CONTROL_PORT), a
+
+  ; --- 3. Set Color (R#44) ---
+  ld a, b
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 44
+  out (VDP_CONTROL_PORT), a
+
+  ; --- 4. Execute PSET Command (R#46) ---
+  ld a, $50                  ; $50 = PSET
+  out (VDP_CONTROL_PORT), a
+  ld a, 128 + 46
+  out (VDP_CONTROL_PORT), a
+
+  ; Move to next star
+  inc ix
+  inc ix
+  inc ix
+  jr .draw_stars_loop
 
 
 stars_array0:

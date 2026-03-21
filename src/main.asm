@@ -41,27 +41,38 @@ demo:
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
+
   ; We are now inside V-Blank! Blast data to VRAM immediately.
 
   ; frame_count++
   ld hl, frame_count
   inc (hl)
-
-  call loadSpriteAttributes
-  call flip_page
-.vblank_trace_end:
-
-  ; if (frame_count == 60) {beep! && frame_count = 0}
-  ld hl, frame_count
   ld a, (hl)
   cp 60
-  jr nz, .game_loop
-
+  jr nz, .skip_flip_stars
   ld (hl), 0
-  call BEEP
+  
+  ld c, active_page
   call flip_stars
-    
+
+.skip_flip_stars:
+  call loadSpriteAttributes
+  call flip_page
+
+.vblank_trace_end:
+
+  ; Move MSX helicopters
+  call moveMsxHelicopters
+
   jr .game_loop
+
+
+moveMsxHelicopters:
+  ld hl, msx_heli1A_x
+  dec (hl)
+  ld hl, msx_heli1B_x
+  dec (hl)
+  ret
 
 
 boot:
