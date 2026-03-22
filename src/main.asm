@@ -44,6 +44,8 @@ demo:
   ld HL, stucano_palette
   call loadPalette
 
+  call setUpHorizontalScroll
+
   call ENASCR
   ei
 

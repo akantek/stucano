@@ -1,43 +1,36 @@
-; ==============================================================================
-; Routine: check_and_draw_new_column
-; Description: Checks if the camera has moved far enough to require a new 
-;              column. If so, calculates the VRAM X and draws to both pages.
-; ==============================================================================
-check_and_draw_new_column:
-  ld hl, (camera_x)
-  
-  ; 1. Get the current grid column (Camera X / 8)
-  ld a, l
-  rrca
-  rrca
-  rrca
-  and 31                ; A = current column index (0 to 31)
-  
-  ; 2. Have we already drawn this column?
-  ld b, a               ; Save current column index in B
-  ld a, (last_column_x)
-  cp b
-  ret z                 ; If it's the same as last frame, do nothing!
-  
-  ; 3. Save the new column index so we don't draw it again next frame
-  ld a, b
-  ld (last_column_x), a
+; The Single-Page Wrap (Register #25)
+; The MSX2+ horizontal scroll doesn't have to span 512 pixels.
+; By configuring VDP Register #25, you can tell the hardware to wrap the 
+; horizontal scroll around a single 256-pixel page.
 
-  ; 4. Calculate the VRAM Destination X (Snap Camera X to 8px grid)
-  ld a, l
-  and 248               ; %11111000 - Snaps to 0, 8, 16... 240, 248
-  ld (dest_x), a        ; Set the destination X for your drawing routine
+; The 8-Pixel Mask Trick
+; Register 25 also has a "Mask" bit (MSK). When enabled, it forces the leftmost
+; 8 pixels of the screen (X=0 to 7) to display the border color, creating a permanent
+; 8-pixel "blind spot."
 
-  ; 5. Draw the vertical strip to PAGE 0
-  ld hl, 0              ; Y offset for Page 0
-  ld (dest_y), hl
-  call draw_map_column  ; -> the routine to blast 1 column of tiles
+; Here is the update cycle:
 
-  ; 6. Draw the EXACT SAME vertical strip to PAGE 1
-  ld hl, 256            ; Y offset for Page 1
-  ld (dest_y), hl
-  call draw_map_column  ; -> the routine to blast 1 column of tiles
+; You scroll the camera by incrementing Register 26 (H-Scroll Offset).
 
+; Whenever the camera moves 8 pixels, you figure out which VRAM X-coordinate is currently hidden behind the mask.
+
+; You copy (using HMMM) the new vertical column of tiles from Page 2 into that hidden X-coordinate on BOTH Page 0 and Page 1
+
+; With this, you just write your scroll offset to R#26, and you can freely flip between Page 0 and Page 1 for your software sprites without touching Page 2 or worrying about your hardware sprite tables.
+
+setUpHorizontalScroll:
+  call _hideLeft8Pixels
+
+  ld a, $0c  ; 4 pixels to the left
+  call shiftDisplay
+  ret
+
+_hideLeft8Pixels:
+  ; Enable 1-Page Wrap and Mask Left 8 Pixels
+  ld a, 2
+  out (VDP_CONTROL_PORT), a
+  ld a, 25 + 128            ; Write to Register 25
+  out (VDP_CONTROL_PORT), a
   ret
 
 

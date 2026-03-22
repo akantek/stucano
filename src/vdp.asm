@@ -250,3 +250,21 @@ loadPalette:
   otir
   ret
 
+; A = number of pixels to shift display left
+; Positive values ($01 to $07): Shift the screen to the RIGHT.
+; Negative values ($0F to $08): Shift the screen to the LEFT.
+; Example: shifting 4 to the left:
+;     4 => %0100
+;  cmpl => %1011
+;    +1 => %1100 or $0c
+shiftDisplay:
+  ; Load the adjustment value: Vertical 0, Horizontal -8
+  ld a, $08                  ; %00001000
+  
+  ; Write the value to VDP Register 18
+  out (VDP_CONTROL_PORT), a  ; Send the data value to Port $99
+  ld a, 18 + 128             ; Select Register 18 + Write Flag ($80)
+  out (VDP_CONTROL_PORT), a  ; Send the command to Port $99
+  ret
+
+
