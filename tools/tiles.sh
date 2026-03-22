@@ -27,11 +27,25 @@ process_tile() {
     echo "" >> "$OUTPUT_FILE"
 }
 
-# 3. Process each file with the correct mapping
-process_tile "tile8.txt" "floor"
-process_tile "tileE.txt" "floor"
-process_tile "tank_cannon.txt" "tank"
-process_tile "tank_right.txt" "tank"
-process_tile "tank_left.txt" "tank"
+# 3. Process files using pattern matching to automatically catch all files
+
+echo "Processing floor tiles..."
+for file in "$ASSETS_DIR"/tile*.txt; do
+    # Check if file exists to prevent errors if the directory is empty
+    [ -e "$file" ] || continue 
+    process_tile "$(basename "$file")" "floor"
+done
+
+echo "Processing tank tiles..."
+for file in "$ASSETS_DIR"/tank*.txt; do
+    [ -e "$file" ] || continue
+    process_tile "$(basename "$file")" "tank"
+done
+
+echo "Processing fuel tiles..."
+for file in "$ASSETS_DIR"/fuel*.txt; do
+    [ -e "$file" ] || continue
+    process_tile "$(basename "$file")" "fuel" # Change "fuel" if your python script expects a different map_type
+done
 
 echo "Success! Tilesheet generated at $OUTPUT_FILE"
