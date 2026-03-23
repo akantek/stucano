@@ -61,6 +61,7 @@ demo:
 .vblank_trace_end:
   ; Move player
   call move_player
+  call handle_scroll_input
   call animatePlayerSprite
   
   ; Move MSX helicopters
@@ -153,16 +154,17 @@ frame_count:     equ $C006  ; 1 Byte
 active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
 page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
+camera_x:        equ $C00A  ; 2 bytes to track scroll position
 
 ; Player variables
-player_x:                   equ $C00A
-player_y:                   equ $C00B
-player_anim_frame_counter:  equ $C00C
-player_anim_state:          equ $C00D
+player_x:                   equ $C00C
+player_y:                   equ $C00D
+player_anim_frame_counter:  equ $C00E
+player_anim_state:          equ $C00F
 
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C00E  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C00F  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C010  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C011  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
@@ -229,3 +231,5 @@ color:              equ $C10C  ; 1 byte  (R#44)
 argument:           equ $C10D  ; 1 byte  (R#45)
 command:            equ $C10E  ; 1 byte  (R#46)
 
+
+prev_space_key:     equ $C10F
