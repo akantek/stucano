@@ -2,40 +2,51 @@
 TILE_8: EQU 0  ; Source X = 0
 TILE_E: EQU 1  ; Source X = 8
 
-; --- Playfield Map Data ---
-; Draws 3 rows of tiles (32 tiles per row = 256 pixels wide)
-; Terminated by 255.
+MAP_WIDTH: EQU 128
+SCREEN_TILES_X: EQU 32
+
+; Playfield Map Data (128 tiles wide x 3 rows tall)
 playfield_map:
-  ; Row 1 (Y=192) - 32 tiles of TILE_8
+  ; Row 1 (Y=192) - 128 tiles (0s)
   db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-  ; Row 2 (Y=200) - 32 tiles of TILE_E
-  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-  ; Row 3 (Y=208) - 32 tiles of TILE_E
-  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-  db 255 ; End of map terminator
+  db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+  db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+  db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
+  ; Row 2 (Y=200) - 128 tiles (1s)
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
+  ; Row 3 (Y=208) - 128 tiles (1s)
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+  db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
+; ==============================================================================
+; Routine: drawPlayfield
+; Description: Draws the initial 32x3 visible window from the 128-wide map
+; ==============================================================================
 drawPlayfield:
-  ld hl, playfield_map    ; Pointer to our map array
-  ld b, 0                 ; Starting Dest X (0)
+  ld hl, playfield_map    ; Pointer to the top-left of our map array
   ld c, 192               ; Starting Dest Y (192)
-  call draw_tilemap
-  ret
+  ld d, 3                 ; We have 3 rows to draw
 
-; ==============================================================================
-; Routine: draw_tilemap
-; Inputs:  HL = Address of tilemap array (terminated by 255)
-;          B  = Starting Destination X
-;          C  = Starting Destination Y
-; ==============================================================================
-draw_tilemap:
-.tile_loop:
-  ld a, (hl)              ; Read the next Tile ID from the array
-  cp 255                  ; Is it the terminator?
-  ret z                   ; If yes, we are done!
+drawPF_row_loop:
+  ld b, 0                 ; Starting Dest X (0) for each new row
+  ld e, SCREEN_TILES_X    ; Draw 32 tiles per row to fill the screen
 
-  ; Save our loop state before calling the VDP routines
+  push hl                 ; Save the pointer to the start of this row in the map
+
+drawPF_col_loop:
+  ld a, (hl)              ; Read the Tile ID
+
+  ; --- Save our loop state before calling VDP routines ---
   push hl                 ; Save map pointer
-  push bc                 ; Save current X (B) and Y (C) coordinates
+  push bc                 ; Save current Dest X (B) and Dest Y (C)
+  push de                 ; Save our Row (D) and Col (E) counters
 
   ; --- 1. Calculate Source X (Tile ID * 8) ---
   ld l, a
@@ -49,8 +60,6 @@ draw_tilemap:
   ld (source_y), hl       ; Source Y is always 512 for your tilesheet
 
   ; --- 2. Setup Destination for execute_tile_copy ---
-  ; Your execute_tile_copy routine expects Dest X in IX, and Dest Y in HL.
-  
   ld l, b
   ld h, 0
   push hl
@@ -62,24 +71,36 @@ draw_tilemap:
   ; --- 3. Blast the tile to Page 0 and Page 1 ---
   call execute_tile_copy
 
-  ; Restore our loop state
-  pop bc                  ; Restore X and Y coordinates
+  ; --- Restore our loop state ---
+  pop de                  ; Restore Row and Col counters
+  pop bc                  ; Restore Dest X and Dest Y
   pop hl                  ; Restore map pointer
 
-  ; --- 4. Move to the next tile position ---
+  ; --- 4. Move to the next column ---
   ld a, b
-  add a, 8                ; Move X right by 8 pixels
+  add a, 8                ; Move Dest X right by 8 pixels
   ld b, a
-  jr nc, .next_tile       ; If X didn't overflow 255, we are still on the same row
 
-  ; If X overflowed (248 + 8 = 256, which is 0 in an 8-bit register), wrap to next line!
+  inc hl                  ; Advance map pointer by 1 to get the next tile
+  dec e                   ; Decrement column counter
+  jr nz, drawPF_col_loop  ; Repeat until 32 columns are drawn
+
+  ; --- 5. Move to the next row ---
   ld a, c
-  add a, 8                ; Move Y down by 8 pixels
-  ld c, a                 ; Save new Y
+  add a, 8                ; Move Dest Y down by 8 pixels
+  ld c, a
 
-.next_tile:
-  inc hl                  ; Advance to the next byte in the map array
-  jr .tile_loop           ; Repeat until we hit 255
+  ; Advance the map pointer to the start of the NEXT row
+  pop hl                  ; Restore pointer to the start of the CURRENT row
+  push de                 ; Temporarily save counters so we can use DE
+  ld de, MAP_WIDTH        ; Load the stride length (128 bytes)
+  add hl, de              ; Jump to the start of the next row
+  pop de                  ; Restore counters
+
+  dec d                   ; Decrement row counter
+  jr nz, drawPF_row_loop  ; Repeat until 3 rows are drawn
+  
+  ret
 
 
 execute_tile_copy:
@@ -111,5 +132,3 @@ execute_tile_copy:
   call execute_hmmm      ; Send the table to VDP again. It copies from Y=512 to Y=448
   call wait_vdp_ready    ; Halt Z80 until VDP is done
   ret
-
-
