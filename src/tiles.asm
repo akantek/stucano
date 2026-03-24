@@ -5,28 +5,169 @@ loadTilesheet:
   ; In Screen 5, Page 2 Y-offset is 512.
   ld hl, 0            ; Top-left of the page
   ld a, 4             ; Bank 4 = Page 2 (VRAM $10000)
-  ld ix, tile8
+  ld ix, tile0
   call drawTile
 
   ld hl, 4              ; lin:0, pos:1
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
-  ld ix, tileE
+  ld ix, tile1
   call drawTile
 
   ld hl, 8              ; lin:0, pos:1
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
-  ld ix, tank_left
+  ld ix, tile2
   call drawTile
 
   ld hl, 12              ; lin:0, pos:1
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
-  ld ix, tank_right
+  ld ix, tile3
   call drawTile
 
   ld hl, 16              ; lin:0, pos:1
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
+  ld ix, tile4
+  call drawTile
+
+  ld hl, 20
+  ld a, 4
+  ld ix, tile5
+  call drawTile
+
+  ld hl, 24              
+  ld a, 4
+  ld ix, tile6
+  call drawTile
+
+  ld hl, 28
+  ld a, 4
+  ld ix, tile7
+  call drawTile
+
+  ld hl, 32
+  ld a, 4
+  ld ix, tile8
+  call drawTile
+
+  ld hl, 36
+  ld a, 4
+  ld ix, tile9
+  call drawTile
+
+  ld hl, 40
+  ld a, 4
+  ld ix, tileA
+  call drawTile
+
+  ld hl, 44
+  ld a, 4
+  ld ix, tileB
+  call drawTile
+
+  ld hl, 48
+  ld a, 4
+  ld ix, tileC
+  call drawTile
+
+  ld hl, 52
+  ld a, 4
+  ld ix, tileD
+  call drawTile
+
+  ld hl, 56
+  ld a, 4
+  ld ix, tileE
+  call drawTile
+
+  ld hl, 60
+  ld a, 4
+  ld ix, tileF
+  call drawTile
+
+  ld hl, 64
+  ld a, 4
+  ld ix, tileG
+  call drawTile
+
+  ld hl, 68
+  ld a, 4
+  ld ix, tileH
+  call drawTile
+
+  ld hl, 72
+  ld a, 4
+  ld ix, tileI
+  call drawTile
+
+  ld hl, 76
+  ld a, 4
+  ld ix, tileJ
+  call drawTile
+
+  ld hl, 80
+  ld a, 4
+  ld ix, tileK
+  call drawTile
+
+  ld hl, 84
+  ld a, 4
+  ld ix, tileL
+  call drawTile
+
+  ld hl, 88
+  ld a, 4
+  ld ix, tileM
+  call drawTile
+
+  ld hl, 92
+  ld a, 4
+  ld ix, tileN
+  call drawTile
+
+  ld hl, 96
+  ld a, 4
   ld ix, tank_cannon
   call drawTile
+
+  ld hl, 100
+  ld a, 4
+  ld ix, tank_left
+  call drawTile
+
+  ld hl, 104
+  ld a, 4
+  ld ix, tank_right
+  call drawTile
+
+  ld hl, 108
+  ld a, 4
+  ld ix, tank_right
+  call drawTile
+
+  ld hl, 112
+  ld a, 4
+  ld ix, fuel_bottom_left
+  call drawTile
+
+  ld hl, 116
+  ld a, 4
+  ld ix, fuel_bottom_right
+  call drawTile
+
+  ld hl, 120
+  ld a, 4
+  ld ix, fuel_up_left
+  call drawTile
+
+  ld hl, 124
+  ld a, 4
+  ld ix, fuel_up_right
+  call drawTile
+
+
+
+
+  
+
 
   ret
 
@@ -101,3 +242,41 @@ drawTile:
     djnz .draw_tile_line_loop
     ret
 
+; $1F (Page 0) starts at VRAM $0000 (Y=0)
+; $3F (Page 1) starts at VRAM $8000 (Y=256)
+; $5F (Page 2) starts at VRAM $10000 (Y=512)
+testTilesheet:
+  ; 1. Point VDP Register 2 to Page 2 ($5F = VRAM $10000)
+  ld a, $5F
+  di
+  out (VDP_CONTROL_PORT), a
+  ld a, 2 + 128
+  out (VDP_CONTROL_PORT), a
+  ei
+
+  ; 2. Turn the screen on so we can see it
+  call ENASCR
+
+  ; 3. Wait 600 frames (approx 10 seconds at 60Hz)
+  ld bc, 600
+.wait_10_seconds:
+  push bc                ; Save our 16-bit counter
+  call wait_vsync        ; Wait for 1 frame
+  pop bc                 ; Restore counter
+  dec bc                 ; Subtract 1
+  ld a, b                ; Check if BC is 0
+  or c
+  jr nz, .wait_10_seconds ; If not 0, loop again
+
+  ; 4. Turn the screen back off
+  call DISSCR
+
+  ; 5. Restore VDP Register 2 back to Page 0 ($1F = VRAM $0000)
+  ld a, $1F
+  di
+  out (VDP_CONTROL_PORT), a
+  ld a, 2 + 128
+  out (VDP_CONTROL_PORT), a
+  ei
+
+  ret

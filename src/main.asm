@@ -144,6 +144,7 @@ boot:
 
   ; Load tiles
   call loadTilesheet
+  call testTilesheet
   ret
 
 
