@@ -163,11 +163,20 @@ loadTilesheet:
   ld ix, fuel_up_right
   call drawTile
 
+; Next line: HL = (Y * 128) + X/2
+; Row 2, Column 0 (X=0, Y=8): (8 * 128) + 0 = 1024
+; Row 2, Column 1 (X=8, Y=8): (8 * 128) + 4 = 1028
+; etc
 
+  ld hl, 1024
+  ld a, 4
+  ld ix, missile_A_left
+  call drawTile
 
-
-  
-
+  ld hl, 1028
+  ld a, 4
+  ld ix, missile_A_right
+  call drawTile
 
   ret
 
@@ -242,41 +251,4 @@ drawTile:
     djnz .draw_tile_line_loop
     ret
 
-; $1F (Page 0) starts at VRAM $0000 (Y=0)
-; $3F (Page 1) starts at VRAM $8000 (Y=256)
-; $5F (Page 2) starts at VRAM $10000 (Y=512)
-testTilesheet:
-  ; 1. Point VDP Register 2 to Page 2 ($5F = VRAM $10000)
-  ld a, $5F
-  di
-  out (VDP_CONTROL_PORT), a
-  ld a, 2 + 128
-  out (VDP_CONTROL_PORT), a
-  ei
 
-  ; 2. Turn the screen on so we can see it
-  call ENASCR
-
-  ; 3. Wait 600 frames (approx 10 seconds at 60Hz)
-  ld bc, 600
-.wait_10_seconds:
-  push bc                ; Save our 16-bit counter
-  call wait_vsync        ; Wait for 1 frame
-  pop bc                 ; Restore counter
-  dec bc                 ; Subtract 1
-  ld a, b                ; Check if BC is 0
-  or c
-  jr nz, .wait_10_seconds ; If not 0, loop again
-
-  ; 4. Turn the screen back off
-  call DISSCR
-
-  ; 5. Restore VDP Register 2 back to Page 0 ($1F = VRAM $0000)
-  ld a, $1F
-  di
-  out (VDP_CONTROL_PORT), a
-  ld a, 2 + 128
-  out (VDP_CONTROL_PORT), a
-  ei
-
-  ret

@@ -22,6 +22,7 @@ include "msx_helicopters.asm"
 include "playfield.asm"
 include "palettes.asm"
 include "scroll.asm"
+include "test.asm"
 include "main.asm"
   ds $c000 - $, 0
 

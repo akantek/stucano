@@ -48,4 +48,10 @@ for file in "$ASSETS_DIR"/fuel*.txt; do
     process_tile "$(basename "$file")" "fuel" # Change "fuel" if your python script expects a different map_type
 done
 
+echo "Processing missile tiles..."
+for file in "$ASSETS_DIR"/missile*.txt; do
+    [ -e "$file" ] || continue
+    process_tile "$(basename "$file")" "missile"
+done
+
 echo "Success! Tilesheet generated at $OUTPUT_FILE"

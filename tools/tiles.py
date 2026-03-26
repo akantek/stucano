@@ -22,6 +22,14 @@ TILE_MAP_FUEL = {
     0: "0"
 }
 
+TILE_MAP_MISSILE = {
+    3: "F",
+    2: "9",
+    1: "3",
+    0: "0"
+}
+
+
 def generate_z80_hex_array(input_data, mapping):
     """
     Converts a string of numbers into a Z80 assembly byte definition 
@@ -79,7 +87,8 @@ def main():
     options = {
         "floor": TILE_MAP_FLOOR,
         "tank": TILE_MAP_TANK,
-        "fuel": TILE_MAP_FUEL
+        "fuel": TILE_MAP_FUEL,
+        "missile": TILE_MAP_MISSILE
     }
 
     if map_choice not in options:
