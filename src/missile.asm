@@ -15,6 +15,9 @@ handleMissleSpawn:
   ld a, 1
   ld (missile_state), a
 
+  ; Play sound
+  ; call play_missile_fire   ; bad, too slow
+
   ; Set starting X and initialize old positions to match
   ld a, (playerA_x)
   add a, 10

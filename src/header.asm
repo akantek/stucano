@@ -31,6 +31,10 @@ PAGE1_Y_OFFSET:   equ 256
 PAGE2_Y_OFFSET:   equ 512
 PAGE2_VRAM_ADDR:  equ PAGE2_Y_OFFSET * 128  ; This equals $10000 (65536)
 
+; --- PSG (Programmable Sound Generator) ---
+PSG_REG_PORT:     EQU $A0         ; Select PSG Register
+PSG_DATA_PORT:    EQU $A1         ; Write Data to PSG Register
+
 ; --- Screen 5 Sprite Tables (Default Locations) ---
 ; Note: These are standard for Screen 5 but can be moved via registers.
 VRAM_SPR_COLORS:   equ $7400       ; Sprite Color Table (SCT)

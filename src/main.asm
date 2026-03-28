@@ -53,6 +53,8 @@ demo:
   ld hl, page_ready_flip
   ld (hl), 1
 
+  call start_helicopter_fx
+
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
