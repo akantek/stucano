@@ -1,4 +1,4 @@
-NUM_SPRITES:    equ 8 
+NUM_SPRITES:    equ 10
 
 loadSpritePatterns:
   ld HL, sprite_patterns_start
@@ -36,6 +36,14 @@ loadSpriteColors:
   ld a, SPRITE_VRAM_BANK               ; Bank 1
   ld c, msx_helicopter_colors_end - msx_helicopter_colors_start ; Length in C (max 256)
   call write_vram_fast
+  
+  ; --- Load colors for Sprites 8 & 9 ---
+  ld hl, msx_helicopter_colors_start   ; Source RAM (re-use the same colors)
+  ld de, VRAM_SPR_COLORS + 128         ; Dest VRAM offset by 32 bytes ($7420)
+  ld a, SPRITE_VRAM_BANK               ; Bank 1
+  ld c, msx_helicopter_colors_end - msx_helicopter_colors_start ; Length in C (max 256)
+  call write_vram_fast
+
   ret
 
 
@@ -111,6 +119,12 @@ init_sprite_attributes:
 
   ; Sprite 7: MSX Helicopter right facing
   db 120, 188 + 14, 60, 0
+
+  ; Sprite 8: MSX Helicopter left facing
+  db 30, 40, 56, 0
+
+  ; Sprite 9: MSX Helicopter right facing
+  db 30, 40 + 14, 60, 0
   ret
 
 

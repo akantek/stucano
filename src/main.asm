@@ -68,28 +68,7 @@ demo:
   call moveMsxHelicopters
   call updateMsxHeliSpritePattern
 
-  ; if SHIFT is pressed, then show missile
-  call scan_keypad
-  bit KEY_SHIFT_BIT, a       ; Check if SHIFT is pressed
-  jr nz, .skip_missile       ; In scan_keypad, 0 = pressed, 1 = not pressed. Skip if 1.
-
-  ; 1. Setup Source Coordinates (Missile tiles in Page 2)
-  ld hl, 0                   ; Source X = 0
-  ld de, 520                 ; Source Y = 520 (Base 512 + 8 pixels down)
-
-; 2. Setup Destination Coordinates (Offset by +10 X, +10 Y)
-  ld a, (playerA_x)
-  add a, 10                  ; Offset X by 10 pixels right
-  ld b, a                    ; Dest X
-  
-  ld a, (playerA_y)
-  add a, 10                  ; Offset Y by 10 pixels down
-  ld c, a                    ; Dest Y 
-
-  ; 3. Execute VDP Command
-  call draw_16x8_to_both_pages
-
-.skip_missile:
+  call handleMissleSpawn
 
   ; Update SAT with player and enemies location
   call update_player_sat
@@ -187,13 +166,17 @@ player_anim_frame_counter:  equ $C00E
 player_anim_state:          equ $C00F
 
 ; Missile
-missile_x:      equ $C010
-missile_y:      equ $C011
-missile_state:  equ $C012
+missile_x:       equ $C010
+missile_y:       equ $C011
+missile_state:   equ $C012
+missile_old_x_0: equ $C013  ; Old X position on Page 0
+missile_old_y_0: equ $C014  ; Old Y position on Page 0
+missile_old_x_1: equ $C015  ; Old X position on Page 1
+missile_old_y_1: equ $C016  ; Old Y position on Page 1
 
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C013  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C014  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C017  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C018  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
@@ -242,8 +225,18 @@ msx_heli2B_y:   equ $C03C   ; Byte 8: Y Coordinate
 msx_heli2B_x:   equ $C03D   ; Byte 9: X Coordinate
 msx_heli2B_pat: equ $C03E   ; Byte 10: Pattern Number
 msx_heli2B_ign: equ $C03F   ; Byte 11: ignored
+; MSX helicopter 3 A
+msx_heli3A_y:   equ $C040   ; Byte 4: Y Coordinate
+msx_heli3A_x:   equ $C041   ; Byte 5: X Coordinate
+msx_heli3A_pat: equ $C042   ; Byte 6: Pattern Number
+msx_heli3A_ign: equ $C043   ; Byte 7: ignored
+; MSX helicopter 3 B
+msx_heli3B_y:   equ $C044   ; Byte 8: Y Coordinate
+msx_heli3B_x:   equ $C045   ; Byte 9: X Coordinate
+msx_heli3B_pat: equ $C046   ; Byte 10: Pattern Number
+msx_heli3B_ign: equ $C047   ; Byte 11: ignored
 
-shadow_sat_end: equ $C03F   ; End of the 4-byte block
+shadow_sat_end: equ $C047   ; End of the 4-byte block
 
 ; ---------------------------------------------------------
 ; HMMM Data Template (15 bytes)

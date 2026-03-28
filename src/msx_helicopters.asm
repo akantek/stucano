@@ -11,6 +11,15 @@ moveMsxHelicopters:
   dec (hl)
   dec (hl)
 
+  ld hl, msx_heli3A_x
+  dec (hl)
+  dec (hl)
+  dec (hl)
+  ld hl, msx_heli3B_x
+  dec (hl)
+  dec (hl)
+  dec (hl)
+
   ret
 
 
@@ -44,6 +53,11 @@ updateMsxHeliSpritePattern:
   ld (msx_heli2A_pat), a
   add a, 4
   ld (msx_heli2B_pat), a
+  ; MSX Helicopter 3
+  ld a, 48
+  ld (msx_heli3A_pat), a
+  add a, 4
+  ld (msx_heli3B_pat), a
 
   jr  .end_update_msx_heli_pattern
 
@@ -61,6 +75,11 @@ updateMsxHeliSpritePattern:
   ld (msx_heli2A_pat), a
   add a, 4
   ld (msx_heli2B_pat), a
+  ; MSX Helicopter 1
+  ld a, 56
+  ld (msx_heli3A_pat), a
+  add a, 4
+  ld (msx_heli3B_pat), a
   ; Fallthrough to apply
 
 .end_update_msx_heli_pattern:
