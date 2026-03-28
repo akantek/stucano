@@ -178,6 +178,16 @@ loadTilesheet:
   ld ix, missile_A_right
   call drawTile
 
+  ld hl, 1032
+  ld a, 4
+  ld ix, missile_B
+  call drawTile
+
+  ld hl, 1036
+  ld a, 4
+  ld ix, missile_C
+  call drawTile
+
   ret
 
 
@@ -251,4 +261,53 @@ drawTile:
     djnz .draw_tile_line_loop
     ret
 
+; ==============================================================================
+; Routine: draw_tile_to_both_pages
+; Description: Uses HMMM to copy an 8x8 tile to the same X/Y on Pages 0 and 1.
+;
+; Inputs:
+;   HL = Source X (0-255)  - X coordinate of the tile in Page 2
+;   DE = Source Y (512+)   - Y coordinate of the tile in Page 2
+;   B  = Destination X (0-255)
+;   C  = Destination Y (0-211)
+;
+; Destroys: A, BC, HL, DE
+; ==============================================================================
+draw_tile_to_both_pages:
+  ; --- 1. Set Source Coordinates ---
+  ld (source_x), hl
+  ld (source_y), de
+
+  ; --- 2. Set Destination X ---
+  ld l, b
+  ld h, 0
+  ld (dest_x), hl          ; Write 16-bit X to HMMM table
+
+  ; --- 3. Set Destination Y (Page 0) ---
+  ld l, c
+  ld h, 0
+  ld (dest_y), hl          ; Write 16-bit Y for Page 0
+
+  ; --- 4. Set Dimensions & Command ---
+  ld hl, 8
+  ld (width), hl           ; 8 pixels wide
+  ld (height), hl          ; 8 pixels tall
+  
+  ld a, $D0                ; $D0 = HMMM Command
+  ld (command), a
+
+  ; --- 5. Draw to Page 0 ---
+  call execute_hmmm
+  call wait_vdp_ready      ; Wait for VDP to finish Page 0
+
+  ; --- 6. Draw to Page 1 ---
+  ; FIX: Read dest_y from RAM because execute_hmmm destroyed register C
+  ld hl, (dest_y)          
+  ld de, 256
+  add hl, de               ; Add 256 to Y coordinate for Page 1
+  ld (dest_y), hl
+
+  call execute_hmmm
+  call wait_vdp_ready      ; Wait for VDP to finish Page 1
+  ret
 

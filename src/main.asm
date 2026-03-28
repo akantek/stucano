@@ -25,6 +25,9 @@ demo:
   ld hl, stars_array0
   call draw_stars    
 
+  ; TODO: move this later
+  call draw_centered_missile
+
   ; Print strings
   ; Print the game title at Column 5, Row 2, on Page 0 and Page 1
   PRINT_AT 10, 10, 0, stucano_title_str
