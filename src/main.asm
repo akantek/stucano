@@ -25,9 +25,6 @@ demo:
   ld hl, stars_array0
   call draw_stars    
 
-  ; TODO: move this later
-  call draw_centered_missile
-
   ; Print strings
   ; Print the game title at Column 5, Row 2, on Page 0 and Page 1
   PRINT_AT 10, 10, 0, stucano_title_str
@@ -70,6 +67,29 @@ demo:
   ; Move MSX helicopters
   call moveMsxHelicopters
   call updateMsxHeliSpritePattern
+
+  ; if SHIFT is pressed, then show missile
+  call scan_keypad
+  bit KEY_SHIFT_BIT, a       ; Check if SHIFT is pressed
+  jr nz, .skip_missile       ; In scan_keypad, 0 = pressed, 1 = not pressed. Skip if 1.
+
+  ; 1. Setup Source Coordinates (Missile tiles in Page 2)
+  ld hl, 0                   ; Source X = 0
+  ld de, 520                 ; Source Y = 520 (Base 512 + 8 pixels down)
+
+; 2. Setup Destination Coordinates (Offset by +10 X, +10 Y)
+  ld a, (playerA_x)
+  add a, 10                  ; Offset X by 10 pixels right
+  ld b, a                    ; Dest X
+  
+  ld a, (playerA_y)
+  add a, 10                  ; Offset Y by 10 pixels down
+  ld c, a                    ; Dest Y 
+
+  ; 3. Execute VDP Command
+  call draw_16x8_to_both_pages
+
+.skip_missile:
 
   ; Update SAT with player and enemies location
   call update_player_sat
@@ -166,9 +186,14 @@ player_y:                   equ $C00D
 player_anim_frame_counter:  equ $C00E
 player_anim_state:          equ $C00F
 
+; Missile
+missile_x:      equ $C010
+missile_y:      equ $C011
+missile_state:  equ $C012
+
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C010  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C011  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C013  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C014  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
