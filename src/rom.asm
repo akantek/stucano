@@ -26,6 +26,7 @@ include "scroll.asm"
 include "fx.asm"
 include "test.asm"
 include "demo.asm"
+include "ram.asm"
 include "main.asm"
   ds $c000 - $, 0
 
