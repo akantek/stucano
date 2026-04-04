@@ -27,7 +27,6 @@ boot:
 
   ; Install VBlank hook
   call install_vblank_hook
-  ei
    
   ; Clean VRAM page 1 for double buffering
   ; Note: the following code (clear vram + wait vdp)
@@ -45,6 +44,9 @@ boot:
 
   ; Load tiles
   call loadTilesheet
+  
+  ; Test tiles
+  ei
   call testTilesheet
   ret
 
