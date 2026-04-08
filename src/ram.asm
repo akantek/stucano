@@ -102,4 +102,6 @@ argument:           equ $C10D  ; 1 byte  (R#45)
 command:            equ $C10E  ; 1 byte  (R#46)
 
 prev_space_key:     equ $C10F
+intro_timer:        equ $C110  ; 1 Byte - Counts frames up to 20
+intro_flash_state:  equ $C111  ; 1 Byte - Tracks if text is currently drawn (0) or blank (1)
 
