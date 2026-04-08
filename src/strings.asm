@@ -6,17 +6,6 @@ PRINT_AT MACRO col, row, page, label
   call print_str
 ENDM
 
-strings:
-
-stucano_title_str:
-  db LETTER_S, LETTER_U, LETTER_P, LETTER_E, LETTER_R, LETTER_SPACE
-  db LETTER_T, LETTER_U, LETTER_C, LETTER_A, LETTER_N, LETTER_O, 255
-
-kanteko_str:
-  db LETTER_K, LETTER_A, LETTER_N, LETTER_T, LETTER_E, LETTER_K, LETTER_O
-  db LETTER_SPACE, DIGIT_2, DIGIT_0, DIGIT_2, DIGIT_6, 255
-
-
 ; ==============================================================================
 ; print_str
 ; INPUTS: HL = String Pointer, C = Column (0-31), E = Row (0-26), A = Page (0-1)

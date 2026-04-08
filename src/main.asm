@@ -3,7 +3,7 @@ main:
   ld sp, $f380  ; ROM standard SP initialization (move to top-of-RAM)
 
   call boot
-  jp demo
+  jp intro
 
 boot:
   ; COLOR 15,1,1
@@ -48,5 +48,6 @@ boot:
   ; Test tiles
   ei
   call testTilesheet
+  di
   ret
 
