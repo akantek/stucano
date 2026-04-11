@@ -3,7 +3,7 @@ intro:
 
   ; Initialize the flash timer and state to 0
   xor a
-  ld (intro_timer), a
+  ld (frame_count), a
   ld (intro_flash_state), a
 
   ; Print title
@@ -23,7 +23,7 @@ intro:
   call wait_vsync
 
   ; 2. Increment our 20-frame counter
-  ld hl, intro_timer
+  ld hl, frame_count
   inc (hl)
   ld a, (hl)
   cp 20
