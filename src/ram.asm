@@ -101,6 +101,9 @@ color:              equ $C10C  ; 1 byte  (R#44)
 argument:           equ $C10D  ; 1 byte  (R#45)
 command:            equ $C10E  ; 1 byte  (R#46)
 
-prev_space_key:     equ $C10F
-intro_flash_state:  equ $C110  ; 1 Byte - Tracks if text is currently drawn (0) or blank (1)
+; Intro variables
+prev_space_key:        equ $C10F
+intro_flash_state:     equ $C110  ; 1 byte - Tracks if text is currently drawn (0) or blank (1)
+intro_flash_delay:     equ $C111  ; 1 byte - Number of frames to wait before blinking push_space_key
+intro_frame_countdown: equ $C112  ; 1 byte - Number of frames to wait after pressing space key
 

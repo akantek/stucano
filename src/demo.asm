@@ -4,6 +4,15 @@ demo:
   ; Init
   di
 
+  ; Clear VRAM page 0
+  ld a, 0
+  call clear_vram_page
+  call wait_vdp_ready
+  ; Clear VRAM page 1
+  ld a, 1
+  call clear_vram_page
+  call wait_vdp_ready
+
   ; Initialize vars
   ld hl, player_anim_frame_counter
   ld (hl), 4

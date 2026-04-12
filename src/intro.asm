@@ -1,10 +1,18 @@
 intro:
   di
 
+  ; Initialize the number of frames to wait after pressing space
+  ld a, 60
+  ld (intro_frame_countdown), a
+
   ; Initialize the flash timer and state to 0
   xor a
   ld (frame_count), a
   ld (intro_flash_state), a
+
+  ; Initialize intro_flash_delay to 20
+  ld a, 20
+  ld (intro_flash_delay), a
 
   ; Print title
   PRINT_AT 10, 8, 0, stucano_title_str
@@ -19,34 +27,61 @@ intro:
   ei
 
 .intro_loop:
-  ; 1. Wait for the hardware V-Blank
+  ; Wait for the hardware V-Blank
   call wait_vsync
 
-  ; 2. Increment our 20-frame counter
+  ; scan keyboard
+  call scan_keypad
+  ld E, A
+
+  ; Check if space key is pressed
+  bit KEY_SPACE_BIT, E        
+  jr nz, .not_intro_space_key     ; if (space_key NOT pressed): skip ahead
+
+  ; Space key pressed, change `intro_flash_delay` to 5
+  ld a, 5
+  ld (intro_flash_delay), a
+
+.not_intro_space_key:
+  ; if (intro_flash_delay == 5): then starts counting dow `intro_frame_countdown`
+  ld a, (intro_flash_delay)
+  cp 5
+  jr nz, .skip_fast_space_key_flash
+  ; if ( intro_frame_countdown-- == 0): go to demo !!!
+  ld a, (intro_frame_countdown)
+  dec a
+  ld (intro_frame_countdown), a    ; Store back the decremented value
+  jp z, demo
+
+.skip_fast_space_key_flash
+  ; frame_counter++
   ld hl, frame_count
   inc (hl)
   ld a, (hl)
-  cp 20
-  jr nz, .intro_loop      ; If it hasn't reached 20 yet, keep waiting
 
-  ; 3. Timer hit 20! Reset the timer back to 0
-  ld (hl), 0
+  ; if (frame_count < intro_flash_delay): goto .intro_loop
+  ld hl, intro_flash_delay
+  cp (hl)                 ; Compares A (frame_count) with (hl) (intro_flash_delay)
+  jr c, .intro_loop       ; If frame_count < flash_delay (Carry flag set), keep waiting
 
-  ; 4. Toggle the flash state (0 becomes 1, 1 becomes 0)
+  ; Timer hit the delay limit -> frame_count = 0
+  xor a
+  ld (frame_count), a     ; Reset frame count directly
+
+  ; Toggle the flash state (0 becomes 1, 1 becomes 0)
   ld hl, intro_flash_state
   ld a, (hl)
   xor 1
   ld (hl), a
-  
-  ; 5. Branch based on the new state
-  jr z, .draw_text
+  ; if (a == 0): goto .draw_intro_text
+  jr z, .draw_intro_text
 
-.draw_blank:
+.draw_intro_blank:
   ; Overwrite with spaces
   PRINT_AT 9, 12, 0, push_space_key_blank_str
   jr .intro_loop
 
-.draw_text:
+.draw_intro_text:
   ; Redraw the actual text
   PRINT_AT 9, 12, 0, push_space_key_str
   jr .intro_loop
