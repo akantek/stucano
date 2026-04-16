@@ -5,30 +5,34 @@ frame_count:     equ $C006  ; 1 Byte
 active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
 page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
 stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
-camera_x:        equ $C00A  ; 2 bytes to track scroll position
+
+; Scroll variables
+camera_x:        equ $C00A  ; 2 bytes to track scroll position ($C00A, $C00B)
+scroll_timer:    equ $C00C  ; 1 byte - Controls automatic scroll speed
 
 ; Player variables
-player_x:                   equ $C00C
-player_y:                   equ $C00D
-player_anim_frame_counter:  equ $C00E
-player_anim_state:          equ $C00F
+player_x:                   equ $C00D
+player_y:                   equ $C00E
+player_anim_frame_counter:  equ $C00F
+player_anim_state:          equ $C010
 
 ; Missile
-missile_x:       equ $C010
-missile_y:       equ $C011
-missile_state:   equ $C012
-missile_old_x_0: equ $C013  ; Old X position on Page 0
-missile_old_y_0: equ $C014  ; Old Y position on Page 0
-missile_old_x_1: equ $C015  ; Old X position on Page 1
-missile_old_y_1: equ $C016  ; Old Y position on Page 1
+missile_x:       equ $C011
+missile_y:       equ $C012
+missile_state:   equ $C013
+missile_old_x_0: equ $C014  ; Old X position on Page 0
+missile_old_y_0: equ $C015  ; Old Y position on Page 0
+missile_old_x_1: equ $C016  ; Old X position on Page 1
+missile_old_y_1: equ $C017  ; Old Y position on Page 1
 
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C017  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C018  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C018  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C019  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
 ; 1 Sprite = 4 Bytes
+; (No shift needed here: $C01A to $C01F are safely unused padding)
 ; ---------------------------------------------------------
 shadow_sat:     equ $C020
 
@@ -106,6 +110,4 @@ prev_space_key:        equ $C10F
 intro_flash_state:     equ $C110  ; 1 byte - Tracks if text is currently drawn (0) or blank (1)
 intro_flash_delay:     equ $C111  ; 1 byte - Number of frames to wait before blinking push_space_key
 intro_frame_countdown: equ $C112  ; 1 byte - Number of frames to wait after pressing space key
-
-scroll_timer:    equ $C113  ; 1 byte - Controls automatic scroll speed
 
