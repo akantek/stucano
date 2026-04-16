@@ -55,7 +55,7 @@ demo:
 .vblank_trace_end:
   ; Move player
   call move_player
-  call handle_scroll_input
+  call update_auto_scroll
   call animatePlayerSprite
   
   ; Move MSX helicopters

@@ -107,3 +107,5 @@ intro_flash_state:     equ $C110  ; 1 byte - Tracks if text is currently drawn (
 intro_flash_delay:     equ $C111  ; 1 byte - Number of frames to wait before blinking push_space_key
 intro_frame_countdown: equ $C112  ; 1 byte - Number of frames to wait after pressing space key
 
+scroll_timer:    equ $C113  ; 1 byte - Controls automatic scroll speed
+
