@@ -125,6 +125,7 @@ draw_next_map_column:
   
   ret
 
+
 ; ==============================================================================
 ; Helper Routine: blast_map_tile
 ; Inputs: A = Tile ID, B = Dest X, C = Dest Y (for Page 0)

@@ -1,3 +1,48 @@
+; --- Tile IDs ---
+
+; -- Row 1 (IDs 0 to 31) --
+_0: EQU 0   ; tile0
+_1: EQU 1   ; tile1
+_2: EQU 2   ; tile2
+_3: EQU 3   ; tile3
+_4: EQU 4   ; tile4
+_5: EQU 5   ; tile5
+_6: EQU 6   ; tile6
+_7: EQU 7   ; tile7
+_8: EQU 8   ; tile8 (Playfield Map Row 1: Ground Top Edge)
+_9: EQU 9   ; tile9
+_A: EQU 10  ; tileA
+_B: EQU 11  ; tileB
+_C: EQU 12  ; tileC
+_D: EQU 13  ; tileD
+_E: EQU 14  ; tileE (Playfield Map Rows 2 & 3: Solid Ground)
+_F: EQU 15  ; tileF
+_G: EQU 16  ; tileG
+_H: EQU 17  ; tileH
+_I: EQU 18  ; tileI
+_J: EQU 19  ; tileJ
+_K: EQU 20  ; tileK
+_L: EQU 21  ; tileL
+_M: EQU 22  ; tileM
+_N: EQU 23  ; tileN
+
+; Entities (Still in Row 1)
+TANK_CANNON:       EQU 24  ; tank_cannon
+TANK_LEFT:         EQU 25  ; tank_left
+TANK_RIGHT_1:      EQU 26  ; tank_right (First draw)
+TANK_RIGHT_2:      EQU 27  ; tank_right (Second draw)
+FUEL_BOTTOM_LEFT:  EQU 28  ; fuel_bottom_left
+FUEL_BOTTOM_RIGHT: EQU 29  ; fuel_bottom_right
+FUEL_UP_LEFT:      EQU 30  ; fuel_up_left
+FUEL_UP_RIGHT:     EQU 31  ; fuel_up_right
+
+; -- Row 2 (IDs 32 to 63) --
+MISSILE_A_LEFT:    EQU 32  ; HL = 1024
+MISSILE_A_RIGHT:   EQU 33  ; HL = 1028
+MISSILE_B:         EQU 34  ; HL = 1032
+MISSILE_C:         EQU 35  ; HL = 1036
+SKULL_LEFT:        EQU 36  ; HL = 1040
+
 ; Formula for HL: HL=(Y * 128) + X/2
 loadTilesheet:
   ; --- STEP 1: Draw tile8 to Page 2 ---
@@ -186,6 +231,11 @@ loadTilesheet:
   ld hl, 1036
   ld a, 4
   ld ix, missile_C
+  call drawTile
+
+  ld hl, 1040
+  ld a, 4
+  ld ix, skull_left
   call drawTile
 
   ret

@@ -54,4 +54,10 @@ for file in "$ASSETS_DIR"/missile*.txt; do
     process_tile "$(basename "$file")" "missile"
 done
 
+echo "Processing skull tiles..."
+for file in "$ASSETS_DIR"/skull*.txt; do
+    [ -e "$file" ] || continue
+    process_tile "$(basename "$file")" "skull"
+done
+
 echo "Success! Tilesheet generated at $OUTPUT_FILE"

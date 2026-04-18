@@ -29,6 +29,10 @@ TILE_MAP_MISSILE = {
     0: "0"
 }
 
+TILE_MAP_SKULL = {
+    0: "0",
+    1: "9"
+}
 
 def generate_z80_hex_array(input_data, mapping):
     """
@@ -88,7 +92,8 @@ def main():
         "floor": TILE_MAP_FLOOR,
         "tank": TILE_MAP_TANK,
         "fuel": TILE_MAP_FUEL,
-        "missile": TILE_MAP_MISSILE
+        "missile": TILE_MAP_MISSILE,
+        "skull": TILE_MAP_SKULL
     }
 
     if map_choice not in options:
