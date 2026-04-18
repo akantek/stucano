@@ -14,7 +14,8 @@ CLIKSW:  equ $F3DB  ; Key Click Switch (0=Off, 1=On)
 FORCLR:  equ $F3E9  ; Foreground Color Storage
 BAKCLR:  equ $F3EA  ; Background Color Storage
 BDRCLR:  equ $F3EB  ; Border Color Storage
-HTIMI:   equ $FD9F  ; Hook: VBLANK Interrupt Handler
+HTIMI:   equ $FD9F  ; VBLANK Interrupt Handler
+HKEYI:   equ $FD9A  ; HBLANK Interrupt Handler (line interrupt hook)
 
 ; --- VDP (Video Display Processor) Ports ---
 VDP_DATA_PORT:          equ $98  ; VRAM Data Read/Write
@@ -23,9 +24,10 @@ VDP_PALETTE_PORT:       equ $9A  ; Palette Register Write
 VDP_INDIRECT_PORT:      equ $9B  ; VDP Command Engine / Indirect Register Write
 
 ; --- VDP Constants & Shadow RAM ---
-RG1SAV:           equ $F3E0       ; Shadow RAM for VDP Register 1
+RG0SAV:           equ $F3DF   ; Shadow copy of VDP Register 0
+RG1SAV:           equ $F3E0   ; Shadow RAM for VDP Register 1
 PAGE1_BANK:       equ 1
-PAGE2_BANK:       equ 2           ; Logic number for VRAM Page 2 (Hidden)
+PAGE2_BANK:       equ 2       ; Logic number for VRAM Page 2 (Hidden)
 PAGE0_Y_OFFSET:   equ 0
 PAGE1_Y_OFFSET:   equ 256
 PAGE2_Y_OFFSET:   equ 512

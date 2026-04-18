@@ -1,38 +1,40 @@
 ; --- RAM VARIABLES ---
 OLD_HTIMI:       equ $C000  ; 5 Bytes ($C000-$C004)
-vsync_flag:      equ $C005  ; 1 Byte
-frame_count:     equ $C006  ; 1 Byte
-active_page:     equ $C007  ; 0 = Page 0 is visible, 1 = Page 1 is visible
-page_ready_flip: equ $C008  ; NEW: 0 = Not Ready, 1 = Ready to flip
-stars_flag:      equ $C009  ; 2 Bytes indicating which array of stars to draw
+OLD_HKEYI:       equ $C005  ; 5 Bytes ($C005-$C009)
+vsync_flag:      equ $C00A  ; 1 Byte
+frame_count:     equ $C00B  ; 1 Byte
+active_page:     equ $C00C  ; 0 = Page 0 is visible, 1 = Page 1 is visible
+page_ready_flip: equ $C00D  ; NEW: 0 = Not Ready, 1 = Ready to flip
+stars_flag:      equ $C00E  ; 2 Bytes indicating which array of stars to draw ($C00E, $C00F)
 
 ; Scroll variables
-camera_x:        equ $C00A  ; 2 bytes to track scroll position ($C00A, $C00B)
-scroll_timer:    equ $C00C  ; 1 byte - Controls automatic scroll speed
+camera_x:        equ $C010  ; 2 bytes to track scroll position ($C010, $C011)
+scroll_timer:    equ $C012  ; 1 byte - Controls automatic scroll speed
 
 ; Player variables
-player_x:                   equ $C00D
-player_y:                   equ $C00E
-player_anim_frame_counter:  equ $C00F
-player_anim_state:          equ $C010
+player_x:                   equ $C013
+player_y:                   equ $C014
+player_anim_frame_counter:  equ $C015
+player_anim_state:          equ $C016
 
 ; Missile
-missile_x:       equ $C011
-missile_y:       equ $C012
-missile_state:   equ $C013
-missile_old_x_0: equ $C014  ; Old X position on Page 0
-missile_old_y_0: equ $C015  ; Old Y position on Page 0
-missile_old_x_1: equ $C016  ; Old X position on Page 1
-missile_old_y_1: equ $C017  ; Old Y position on Page 1
+missile_x:       equ $C017
+missile_y:       equ $C018
+missile_state:   equ $C019
+missile_old_x_0: equ $C01A  ; Old X position on Page 0
+missile_old_y_0: equ $C01B  ; Old Y position on Page 0
+missile_old_x_1: equ $C01C  ; Old X position on Page 1
+missile_old_y_1: equ $C01D  ; Old Y position on Page 1
 
 ; MSX Helicopter variables
-msx_heli_frame_counter: equ $C018  ; 1 Byte - MSX helicopter frame counter
-msx_heli_pattern:       equ $C019  ; 1 Byte - MSX helicopter sprite pattern
+msx_heli_frame_counter: equ $C01E  ; 1 Byte - MSX helicopter frame counter
+msx_heli_pattern:       equ $C01F  ; 1 Byte - MSX helicopter sprite pattern
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM
 ; 1 Sprite = 4 Bytes
-; (No shift needed here: $C01A to $C01F are safely unused padding)
+; (The padding from $C01A to $C01F was consumed by the shift. 
+;  shadow_sat safely remains at $C020)
 ; ---------------------------------------------------------
 shadow_sat:     equ $C020
 

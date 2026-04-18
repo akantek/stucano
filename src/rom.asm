@@ -9,6 +9,7 @@ header:
   dw 0, 0, 0
 include "keypad.asm"
 include "vblank.asm"
+include "hblank.asm"
 include "vdp.asm"
 include "stars.asm"
 include "font.asm"
