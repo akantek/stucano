@@ -104,3 +104,43 @@ msx1_palette:
   db $77, $07
 
 
+; ==============================================================================
+; set_palette_color
+; Changes a single color in the MSX2/MSX2+ palette dynamically.
+;
+; Inputs:
+;   A: Color Index (0 - 15)
+;   B: Red   (0 - 7)
+;   C: Green (0 - 7)
+;   D: Blue  (0 - 7)
+;
+; Registers modified: A
+; ==============================================================================
+set_palette_color:
+  di               ; Disable interrupts (critical to prevent VBLANK from 
+                   ; interrupting our two-part write to VDP port $99)
+
+  ; 1. Set VDP Register 16 (Palette Pointer) to the target color index
+  out ($99), a     ; Send the color index (0-15)
+  ld a, $90        ; $90 is 128 + 16 (Tells VDP to write to Register 16)
+  out ($99), a
+
+  ; 2. Format Byte 1: (Red << 4) | Blue
+  ld a, b          ; Load Red into A
+  rlca             ; Shift left 4 times. Using 4x RLCA is significantly 
+  rlca             ; faster (16 cycles) than setting up a loop or math.
+  rlca
+  rlca
+  or d             ; Merge the Blue value into the lower 4 bits
+
+  ; 3. Write Byte 1 to the Palette Data Port
+  out ($9A), a
+
+  ; 4. Format and Write Byte 2: Green
+  ld a, c          ; Load Green into A
+  out ($9A), a
+
+  ei               ; Restore interrupts
+  ret
+
+
