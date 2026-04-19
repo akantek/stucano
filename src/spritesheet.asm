@@ -206,6 +206,99 @@ helicopter_C_left_Layer2:
 
 sprite_patterns_helicopter_C_end:
 
+; Source: ../assets/sprites/helicopter_explosion_A.txt
+sprite_patterns_helicopter_explosion_A_start:
+; --- Preview: right ---
+; Legend: 0=Empty, 1=Filled
+; +--------------------------------+
+; |                                            |
+; |                                            |
+; |                    ####                    |
+; |                ############                |
+; |            ####    ####    ####            |
+; |          ####    ##    ##    ####          |
+; |        ##    ##  ##    ##  ##    ##        |
+; |      ##    ##      ####      ##    ##      |
+; |        ####    ##  ####  ##    ####        |
+; |        ####  ##            ##  ####        |
+; |            ##  ####    ####  ##            |
+; |          ######    ####    ######          |
+; |        ##    ####        ####    ##        |
+; |                ##        ##                |
+; |                                            |
+; |                                            |
+; +--------------------------------+
+;
+helicopter_explosion_A_right:
+	db $00, $00, $00, $00, $03, $06, $09, $12
+	db $0C, $0D, $02, $07, $09, $00, $00, $00
+	db $00, $00, $30, $FC, $33, $49, $4A, $31
+	db $B4, $02, $CD, $33, $86, $84, $00, $00
+
+sprite_patterns_helicopter_explosion_A_end:
+
+; Source: ../assets/sprites/helicopter_explosion_B.txt
+sprite_patterns_helicopter_explosion_B_start:
+; --- Preview: right ---
+; Legend: 0=Empty, 1=Filled
+; +--------------------------------+
+; |                                            |
+; |                                            |
+; |                    ####                    |
+; |                ############                |
+; |            ####    ####    ####            |
+; |          ####    ##    ##    ####          |
+; |        ##    ##  ##    ##  ##    ##        |
+; |      ##    ##      ####      ##    ##      |
+; |        ####    ##  ####  ##    ####        |
+; |        ####  ##            ##  ####        |
+; |            ##  ####    ####  ##            |
+; |          ######    ####    ######          |
+; |        ##    ####        ####    ##        |
+; |                ##        ##                |
+; |                                            |
+; |                                            |
+; +--------------------------------+
+;
+helicopter_explosion_B_right:
+	db $00, $00, $00, $00, $03, $06, $09, $12
+	db $0C, $0D, $02, $07, $09, $00, $00, $00
+	db $00, $00, $30, $FC, $33, $49, $4A, $31
+	db $B4, $02, $CD, $33, $86, $84, $00, $00
+
+sprite_patterns_helicopter_explosion_B_end:
+
+; Source: ../assets/sprites/helicopter_explosion_C.txt
+sprite_patterns_helicopter_explosion_C_start:
+; --- Preview: right ---
+; Legend: 0=Empty, 1=Filled
+; +--------------------------------+
+; |                                            |
+; |                                            |
+; |                    ####                    |
+; |                ############                |
+; |            ####    ####    ####            |
+; |          ####    ##    ##    ####          |
+; |        ##    ##  ##    ##  ##    ##        |
+; |      ##    ##      ####      ##    ##      |
+; |        ####    ##  ####  ##    ####        |
+; |        ####  ##            ##  ####        |
+; |            ##  ####    ####  ##            |
+; |          ######    ####    ######          |
+; |        ##    ####        ####    ##        |
+; |                ##        ##                |
+; |                                            |
+; |                                            |
+; +--------------------------------+
+;
+helicopter_explosion_C_right:
+	db $00, $00, $00, $00, $03, $06, $09, $12
+	db $0C, $0D, $02, $07, $09, $00, $00, $00
+	db $00, $00, $30, $FC, $33, $49, $4A, $31
+	db $B4, $02, $CD, $33, $86, $84, $00, $00
+
+sprite_patterns_helicopter_explosion_C_end:
+
 ; Source: ../assets/sprites/msx_helicopter_A.txt
 sprite_patterns_msx_helicopter_A_start:
 ; --- Preview: left ---

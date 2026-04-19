@@ -2,11 +2,23 @@
 
 # Define your file names and scripts here
 SPRITE_SCRIPT="simple_sprite_converter.py"
+MULTI_COLOR_SPRITE_SCRIPT="multi_color_sprites_converter.py"
 
 OUTPUT_FILE="../src/spritesheet.asm"
 
-# Helicopter fire input file
-HELICOPTER_FIRE="../assets/sprites/helicopter_fire.txt"
+# Input files for multi-color sprites
+HELICOPTER_A="../assets/sprites/helicopter_A.txt"
+HELICOPTER_B="../assets/sprites/helicopter_B.txt"
+HELICOPTER_C="../assets/sprites/helicopter_C.txt"
+
+# Input files for simple sprites
+MSX_HELICOPTER_A="../assets/sprites/msx_helicopter_A.txt"
+MSX_HELICOPTER_B="../assets/sprites/msx_helicopter_B.txt"
+
+# Helicopter explosion sprites
+HELICOPTER_EXPLOSION_A="../assets/sprites/helicopter_explosion_A.txt"
+HELICOPTER_EXPLOSION_B="../assets/sprites/helicopter_explosion_B.txt"
+HELICOPTER_EXPLOSION_C="../assets/sprites/helicopter_explosion_C.txt"
 
 # 1. Create the file and add the header
 echo "; Auto-generated - don't edit" > "$OUTPUT_FILE"
@@ -16,12 +28,34 @@ echo "" >> "$OUTPUT_FILE"
 echo "sprite_patterns_start:" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
-# 2. Process the helicopter fire sprite and append
-python3 "$SPRITE_SCRIPT" "$HELICOPTER_FIRE" >> "$OUTPUT_FILE"
+# 2. Process multi-color sprites first and append
+python3 "$MULTI_COLOR_SPRITE_SCRIPT" "$HELICOPTER_A" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
-# 3. Add sprite_patterns_end mark
+python3 "$MULTI_COLOR_SPRITE_SCRIPT" "$HELICOPTER_B" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$MULTI_COLOR_SPRITE_SCRIPT" "$HELICOPTER_C" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$SPRITE_SCRIPT" "$HELICOPTER_EXPLOSION_A" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$SPRITE_SCRIPT" "$HELICOPTER_EXPLOSION_B" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$SPRITE_SCRIPT" "$HELICOPTER_EXPLOSION_C" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# 3. Process simple sprites and append
+python3 "$SPRITE_SCRIPT" "$MSX_HELICOPTER_A" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$SPRITE_SCRIPT" "$MSX_HELICOPTER_B" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+# 4. Add sprite_patterns_end mark
 echo "sprite_patterns_end:" >> "$OUTPUT_FILE"
 
-echo "Success! Helicopter fire sprite combined into $OUTPUT_FILE"
+echo "Success! Output combined into $OUTPUT_FILE"
 

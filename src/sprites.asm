@@ -90,7 +90,6 @@ initSpriteAttributes:
   call write_vram_fast
   ret
 
-
 init_sprite_attributes:
   ; Sprite 0: Right Facing - Layer 1 (White)
   ; Y ($60=96), X ($70=112), Pattern 0
@@ -108,23 +107,28 @@ init_sprite_attributes:
   ; Same X,Y as above to overlay them
   db PLAYER_Y_MIN + 10, $86, 12, 0
 
-  ; Sprite 4: MSX Helicopter left facing
-  db 60, 188, 48, 0
+  ; Sprite 4: MSX Helicopter left facing (Frame A)
+  db 60, 188, 52, 0       ; Shifted from 48 -> 52
 
-  ; Sprite 5: MSX Helicopter right facing
-  db 60, 188 + 14, 52, 0
+  ; Sprite 5: MSX Helicopter right facing (Frame A)
+  db 60, 188 + 14, 56, 0  ; Shifted from 52 -> 56
 
-  ; Sprite 6: MSX Helicopter left facing
-  db 120, 188, 56, 0
+  ; Sprite 6: MSX Helicopter left facing (Frame B)
+  db 120, 188, 60, 0      ; Shifted from 56 -> 60
 
-  ; Sprite 7: MSX Helicopter right facing
-  db 120, 188 + 14, 60, 0
+  ; Sprite 7: MSX Helicopter right facing (Frame B)
+  db 120, 188 + 14, 64, 0 ; Shifted from 60 -> 64
 
-  ; Sprite 8: MSX Helicopter left facing
-  db 30, 40, 56, 0
+  ; Sprite 8: MSX Helicopter left facing (Frame B reused)
+  db 30, 40, 60, 0        ; Shifted from 56 -> 60
 
-  ; Sprite 9: MSX Helicopter right facing
-  db 30, 40 + 14, 60, 0
+  ; Sprite 9: MSX Helicopter right facing (Frame B reused)
+  db 30, 40 + 14, 64, 0   ; Shifted from 60 -> 64
+
+  ; Sprite 10: Helicopter Explosion / Fire
+  ; Pattern 48 (inserted right after Player Heli C)
+  ; Spawns at Y=212 to remain hidden off-screen
+  db 212, 0, 48, 0
   ret
 
 
