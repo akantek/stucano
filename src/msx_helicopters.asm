@@ -45,21 +45,21 @@ updateMsxHeliSpritePattern:
   ld  (msx_heli_pattern), a
   
   ; MSX Helicopter 1
-  ld a, 52            ; Shifted from 48
+  ld a, 60
   ld (msx_heli1A_pat), a
-  add a, 4            ; Calculates 56
+  add a, 4            ; Calculates 64
   ld (msx_heli1B_pat), a
   
   ; MSX Helicopter 2
-  ld a, 60            ; Shifted from 56
+  ld a, 68
   ld (msx_heli2A_pat), a
-  add a, 4            ; Calculates 64
+  add a, 4            ; Calculates 72
   ld (msx_heli2B_pat), a
   
   ; MSX Helicopter 3
-  ld a, 52            ; Shifted from 48
+  ld a, 60
   ld (msx_heli3A_pat), a
-  add a, 4            ; Calculates 56
+  add a, 4            ; Calculates 64
   ld (msx_heli3B_pat), a
 
   jr  .end_update_msx_heli_pattern
@@ -70,21 +70,21 @@ updateMsxHeliSpritePattern:
   ld  (msx_heli_pattern), a
   
   ; MSX Helicopter 1
-  ld a, 60            ; Shifted from 56
+  ld a, 68
   ld (msx_heli1A_pat), a
-  add a, 4            ; Calculates 64
+  add a, 4            ; Calculates 72
   ld (msx_heli1B_pat), a
   
   ; MSX Helicopter 2
-  ld a, 52            ; Shifted from 48
+  ld a, 60
   ld (msx_heli2A_pat), a
-  add a, 4            ; Calculates 56
+  add a, 4            ; Calculates 64
   ld (msx_heli2B_pat), a
   
   ; MSX Helicopter 3
-  ld a, 60            ; Shifted from 56
+  ld a, 68
   ld (msx_heli3A_pat), a
-  add a, 4            ; Calculates 64
+  add a, 4            ; Calculates 72
   ld (msx_heli3B_pat), a
   ; Fallthrough to apply
 
