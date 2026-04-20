@@ -1,5 +1,4 @@
 main:
-  di
   ld sp, $f380  ; ROM standard SP initialization (move to top-of-RAM)
 
   call boot
@@ -33,7 +32,6 @@ boot:
   ;   takes around 64.4 milliseconds.
   ld a, 1
   call clear_vram_page
-  call wait_vdp_ready
 
   ; Set sprite size
   call enable_16x16_sprites
@@ -46,8 +44,6 @@ boot:
   call loadTilesheet
   
   ; Test tiles
-  ei
   call testTilesheet
-  di
   ret
 

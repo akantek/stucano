@@ -1,5 +1,5 @@
 ; Install hblank, must be under di and then ei
-; 2. Hook HKEYI (Line Interrupt / H-Blank)
+; Hook HKEYI (Line Interrupt / H-Blank)
 install_hblank:
   ld  hl, HKEYI
   ld  de, OLD_HKEYI

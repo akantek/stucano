@@ -1,4 +1,3 @@
-PLAYER_Y_MIN:   equ 24
 
 demo:
   ; Init
@@ -46,6 +45,12 @@ demo:
   ld (hl), 1
 
   call start_helicopter_fx
+
+  ; Position player
+  ld hl, player_x
+  ld (hl), 30
+  ld hl, player_y
+  ld (hl), 100
 
 .game_loop:
   call wait_vsync        ; Spin until vblank is fired
@@ -98,4 +103,29 @@ demo:
 
 .skip_stars:
   jr .game_loop
+
+
+PLAYER_Y_MIN:   equ 24
+MAP_WIDTH: EQU 128
+SCREEN_TILES_X: EQU 32
+
+; Playfield Map Data (128 tiles wide x 3 rows tall)
+playfield_map:
+  ; Row 1 (Y=192) - 128 tiles (_8s)
+  db _0,_A,_A,_A,_A,_4,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
+  db _8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
+  db _8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
+  db _8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
+
+  ; Row 2 (Y=200) - 128 tiles (_Es)
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+
+  ; Row 3 (Y=208) - 128 tiles (_Es)
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
+  db _E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E,_E
 

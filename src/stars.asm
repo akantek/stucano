@@ -164,14 +164,12 @@ stars_array0:
   db 10, 150, GRAY
   db 45, 12, WHITE
   db 60, 80, LIGHT_BLUE
-  db 88, 200, YELLOW
   db 130, 45, CYAN
   db 155, 170, GRAY
   db 190, 20, WHITE
   db 220, 110, LIGHT_YELLOW
   db 240, 60, LIGHT_BLUE
   db 5, 95, CYAN
-  db 25, 205, WHITE
   db 50, 65, GRAY
   db 75, 140, LIGHT_BLUE
   db 95, 30, YELLOW
@@ -183,7 +181,6 @@ stars_array1:
   db 240, 15, WHITE
   db 85, 99, GREEN
   db 150, 45, LIGHT_BLUE
-  db 55, 190, GRAY
   db 199, 110, YELLOW
   db 33, 22, LIGHT_YELLOW
   db 210, 175, WHITE
@@ -196,7 +193,6 @@ stars_array1:
   db 170, 195, LIGHT_BLUE
   db 48, 105, CYAN
   db 201, 70, GRAY
-  db 115, 200, LIGHT_YELLOW
   db 5, 80, WHITE
   db 250, 160, YELLOW
   db 255

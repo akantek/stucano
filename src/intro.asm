@@ -48,9 +48,8 @@ intro:
   cp 5
   jr nz, .skip_fast_space_key_flash
   ; if ( intro_frame_countdown-- == 0): go to demo !!!
-  ld a, (intro_frame_countdown)
-  dec a
-  ld (intro_frame_countdown), a    ; Store back the decremented value
+  ld hl, intro_frame_countdown
+  dec (hl)
   jp z, demo
 
 .skip_fast_space_key_flash
