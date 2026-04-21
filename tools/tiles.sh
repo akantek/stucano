@@ -29,6 +29,12 @@ process_tile() {
 
 # 3. Process files using pattern matching to automatically catch all files
 
+echo "Processing empty tile..."
+for file in "$ASSETS_DIR"/empty*.txt; do
+    [ -e "$file" ] || continue
+    process_tile "$(basename "$file")" "floor"
+done
+
 echo "Processing floor tiles..."
 for file in "$ASSETS_DIR"/tile*.txt; do
     # Check if file exists to prevent errors if the directory is empty

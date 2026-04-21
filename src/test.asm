@@ -15,7 +15,7 @@ testTilesheet:
   call ENASCR
 
   ; 3. Wait 300 frames (approx 10 seconds at 60Hz) showing Page 2
-  ld bc, 300
+  ld bc, 600
   call WaitFrames
 
   ; 4. Turn the screen back off

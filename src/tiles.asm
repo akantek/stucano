@@ -27,25 +27,27 @@ _M: EQU 22  ; tileM
 _N: EQU 23  ; tileN
 
 ; Entities (Still in Row 1)
-TANK_CANNON:       EQU 24  ; tank_cannon
-TANK_LEFT:         EQU 25  ; tank_left
-TANK_RIGHT_1:      EQU 26  ; tank_right (First draw)
-TANK_RIGHT_2:      EQU 27  ; tank_right (Second draw)
-FUEL_BOTTOM_LEFT:  EQU 28  ; fuel_bottom_left
-FUEL_BOTTOM_RIGHT: EQU 29  ; fuel_bottom_right
-FUEL_UP_LEFT:      EQU 30  ; fuel_up_left
-FUEL_UP_RIGHT:     EQU 31  ; fuel_up_right
+EMPTY:             EQU 24  ; empty
+TANK_CANNON:       EQU 25  ; tank_cannon
+TANK_LEFT:         EQU 26  ; tank_left
+TANK_RIGHT_1:      EQU 27  ; tank_right (First draw)
+TANK_RIGHT_2:      EQU 28  ; tank_right (Second draw)
+FUEL_BOTTOM_LEFT:  EQU 29  ; fuel_bottom_left
+FUEL_BOTTOM_RIGHT: EQU 30  ; fuel_bottom_right
+FUEL_UP_LEFT:      EQU 31  ; fuel_up_left
 
 ; -- Row 2 (IDs 32 to 63) --
-MISSILE_A_LEFT:    EQU 32  ; HL = 1024
-MISSILE_A_RIGHT:   EQU 33  ; HL = 1028
-MISSILE_B:         EQU 34  ; HL = 1032
-MISSILE_C:         EQU 35  ; HL = 1036
-SKULL_LEFT:        EQU 36  ; HL = 1040
+; FUEL_UP_RIGHT is pushed to Row 2
+FUEL_UP_RIGHT:     EQU 32  ; fuel_up_right (HL = 1024)
+MISSILE_A_LEFT:    EQU 33  ; HL = 1028
+MISSILE_A_RIGHT:   EQU 34  ; HL = 1032
+MISSILE_B:         EQU 35  ; HL = 1036
+MISSILE_C:         EQU 36  ; HL = 1040
+SKULL_LEFT:        EQU 37  ; HL = 1044
 
 ; Formula for HL: HL=(Y * 128) + X/2
 loadTilesheet:
-  ; --- STEP 1: Draw tile8 to Page 2 ---
+  ; --- STEP 1: Draw tiles to Page 2 ---
   ; Page 2 starts at Bank 4 (each bank is 16KB, Page 2 is at 64KB)
   ; In Screen 5, Page 2 Y-offset is 512.
   ld hl, 0            ; Top-left of the page
@@ -58,17 +60,17 @@ loadTilesheet:
   ld ix, tile1
   call drawTile
 
-  ld hl, 8              ; lin:0, pos:1
+  ld hl, 8              ; lin:0, pos:2
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
   ld ix, tile2
   call drawTile
 
-  ld hl, 12              ; lin:0, pos:1
+  ld hl, 12             ; lin:0, pos:3
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
   ld ix, tile3
   call drawTile
 
-  ld hl, 16              ; lin:0, pos:1
+  ld hl, 16             ; lin:0, pos:4
   ld a, 4               ; Bank 4 - Page 2 (VRAM $10000)
   ld ix, tile4
   call drawTile
@@ -78,7 +80,7 @@ loadTilesheet:
   ld ix, tile5
   call drawTile
 
-  ld hl, 24              
+  ld hl, 24             
   ld a, 4
   ld ix, tile6
   call drawTile
@@ -170,17 +172,17 @@ loadTilesheet:
 
   ld hl, 96
   ld a, 4
-  ld ix, tank_cannon
+  ld ix, empty
   call drawTile
 
   ld hl, 100
   ld a, 4
-  ld ix, tank_left
+  ld ix, tank_cannon
   call drawTile
 
   ld hl, 104
   ld a, 4
-  ld ix, tank_right
+  ld ix, tank_left
   call drawTile
 
   ld hl, 108
@@ -190,50 +192,55 @@ loadTilesheet:
 
   ld hl, 112
   ld a, 4
-  ld ix, fuel_bottom_left
+  ld ix, tank_right
   call drawTile
 
   ld hl, 116
   ld a, 4
-  ld ix, fuel_bottom_right
+  ld ix, fuel_bottom_left
   call drawTile
 
   ld hl, 120
   ld a, 4
-  ld ix, fuel_up_left
+  ld ix, fuel_bottom_right
   call drawTile
 
   ld hl, 124
   ld a, 4
-  ld ix, fuel_up_right
+  ld ix, fuel_up_left
   call drawTile
 
 ; Next line: HL = (Y * 128) + X/2
-; Row 2, Column 0 (X=0, Y=8): (8 * 128) + 0 = 1024
+; FUEL_UP_RIGHT spills into Row 2, Column 0 (X=0, Y=8): (8 * 128) + 0 = 1024
 ; Row 2, Column 1 (X=8, Y=8): (8 * 128) + 4 = 1028
 ; etc
 
   ld hl, 1024
   ld a, 4
-  ld ix, missile_A_left
+  ld ix, fuel_up_right
   call drawTile
 
   ld hl, 1028
   ld a, 4
-  ld ix, missile_A_right
+  ld ix, missile_A_left
   call drawTile
 
   ld hl, 1032
   ld a, 4
-  ld ix, missile_B
+  ld ix, missile_A_right
   call drawTile
 
   ld hl, 1036
   ld a, 4
-  ld ix, missile_C
+  ld ix, missile_B
   call drawTile
 
   ld hl, 1040
+  ld a, 4
+  ld ix, missile_C
+  call drawTile
+
+  ld hl, 1044
   ld a, 4
   ld ix, skull_left
   call drawTile
