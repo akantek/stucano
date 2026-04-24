@@ -60,6 +60,9 @@ demo:
 .vblank_trace_end:
   ; Move player
   call move_player
+  call check_background_collision
+  jr c, player_died      ; C flag is set! The player hit the terrain!
+
   call update_auto_scroll
   call animatePlayerSprite
   
@@ -105,6 +108,13 @@ demo:
   jr .game_loop
 
 
+player_died:
+  ld HL, player_x
+  ld (HL), 20
+  ld HL, player_y
+  ld (HL), 100
+  jr .game_loop
+
 PLAYER_Y_MIN:   equ 24
 MAP_WIDTH: EQU 128
 SCREEN_TILES_X: EQU 32
@@ -112,7 +122,7 @@ SCREEN_TILES_X: EQU 32
 ; Playfield Map Data (128 tiles wide x 3 rows tall)
 playfield_map:
   ; Row 1 (Y=192) - 128 tiles (_8s)
-  db _0,_A,_A,_A,_A,_4,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
+  db _8,_8,_0,_A,_A,_A,_A,_A,_A,_A,_A,_A,_A,_A,_A,_4,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
   db _8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
   db _8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
   db _8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8,_8
