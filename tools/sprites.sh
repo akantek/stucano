@@ -14,6 +14,7 @@ HELICOPTER_C="../assets/sprites/helicopter_C.txt"
 # Input files for simple sprites
 MSX_HELICOPTER_A="../assets/sprites/msx_helicopter_A.txt"
 MSX_HELICOPTER_B="../assets/sprites/msx_helicopter_B.txt"
+MSX_UFO="../assets/sprites/msx_ufo.txt"
 
 # Helicopter explosion sprites
 HELICOPTER_EXPLOSION_A="../assets/sprites/helicopter_explosion_A.txt"
@@ -52,6 +53,9 @@ python3 "$SPRITE_SCRIPT" "$MSX_HELICOPTER_A" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
 python3 "$SPRITE_SCRIPT" "$MSX_HELICOPTER_B" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$SPRITE_SCRIPT" "$MSX_UFO" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
 # 4. Add sprite_patterns_end mark
