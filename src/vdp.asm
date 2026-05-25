@@ -15,6 +15,8 @@ enable_16x16_sprites:
 
   out (VDP_CONTROL_PORT), a  ; Step 1: Send the DATA (latches it in VDP)
   ld a, 1 + 128              ; Prep Command: Register Index (1) + Write Flag ($80)
+                             ;   Bit 7 (write flag) is 1,
+                             ;     and bit 1 (R#1) is also 1 = %81
   out (VDP_CONTROL_PORT), a  ; Step 2: Send COMMAND to move latched data into Reg 1
   ret
 
