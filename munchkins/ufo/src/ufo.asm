@@ -125,7 +125,7 @@ initSpriteAttributes:
 
 msx_ufo_colors_start:
 ; Sprite 0
-db 12,12,12,12, 12,12,12,12, 8,8,8,8, 8,8,8,8
+db 14,14,14,14, 14,14,14,14, 14,14,14,14, 8,8,8,8
 msx_ufo_colors_end:
 
 init_sprite_attributes:
