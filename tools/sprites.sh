@@ -12,6 +12,7 @@ HELICOPTER_B="../assets/sprites/helicopter_B.txt"
 HELICOPTER_C="../assets/sprites/helicopter_C.txt"
 
 # Input files for simple sprites
+HELICOPTER_FIRE="../assets/sprites/helicopter_fire.txt"
 MSX_HELICOPTER_A="../assets/sprites/msx_helicopter_A.txt"
 MSX_HELICOPTER_B="../assets/sprites/msx_helicopter_B.txt"
 MSX_UFO="../assets/sprites/msx_ufo.txt"
@@ -37,6 +38,9 @@ python3 "$MULTI_COLOR_SPRITE_SCRIPT" "$HELICOPTER_B" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
 python3 "$MULTI_COLOR_SPRITE_SCRIPT" "$HELICOPTER_C" >> "$OUTPUT_FILE"
+echo "" >> "$OUTPUT_FILE"
+
+python3 "$SPRITE_SCRIPT" "$HELICOPTER_FIRE" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
 python3 "$SPRITE_SCRIPT" "$HELICOPTER_EXPLOSION_A" >> "$OUTPUT_FILE"

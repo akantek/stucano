@@ -48,8 +48,8 @@ scan_joypad:
     res 2, a              ; Set KEY_CTRL_BIT
 .skip_ta:
     bit 5, c              ; Check Trigger B
-    jr nz, .done
+    jr nz, .done_joypad
     res 1, a              ; Set KEY_SHIFT_BIT
-.done:
+.done_joypad:
     ret
 

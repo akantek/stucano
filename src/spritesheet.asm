@@ -206,6 +206,37 @@ helicopter_C_left_Layer2:
 
 sprite_patterns_helicopter_C_end:
 
+; Source: ../assets/sprites/helicopter_fire.txt
+sprite_patterns_helicopter_fire_start:
+; --- Preview: helicopter_fire ---
+; Legend: 0=Empty, 1=Filled
+; +--------------------------------+
+; |####                            |
+; |####                            |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; |                                |
+; +--------------------------------+
+;
+helicopter_fire_helicopter_fire:
+	db $C0, $C0, $00, $00, $00, $00, $00, $00
+	db $00, $00, $00, $00, $00, $00, $00, $00
+	db $00, $00, $00, $00, $00, $00, $00, $00
+	db $00, $00, $00, $00, $00, $00, $00, $00
+
+sprite_patterns_helicopter_fire_end:
+
 ; Source: ../assets/sprites/helicopter_explosion_A.txt
 sprite_patterns_helicopter_explosion_A_start:
 ; --- Preview: right ---
