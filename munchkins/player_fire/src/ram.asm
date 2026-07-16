@@ -12,9 +12,13 @@ player_y:        equ $C012
 space_was_pressed: equ $C013  ; 1 Byte
 
 active_sprites:    equ $C014  ; Dynamically tracks how many sprites to draw
-fire_x:            equ $C015  ; Bullet X coordinate
-fire_y:            equ $C016  ; Bullet Y coordinate
-fire_active:       equ $C017  ; 1 = Bullet is on screen, 0 = Off screen
+fire1_x:           equ $C015  ; Bullet1 X coordinate
+fire1_y:           equ $C016  ; Bullet1 Y coordinate
+fire1_active:      equ $C017  ; 1 = Bullet1 is on screen, 0 = Off screen
+fire2_x:           equ $C018  ; Bullet2 X coordinate
+fire2_y:           equ $C019  ; Bullet2 Y coordinate
+fire2_active:      equ $C01A  ; 1 = Bullet2 is on screen, 0 = Off screen
+cooldown_timer:    equ $C01B  ; 7-frame cooldown between individual shots
 
 ; ---------------------------------------------------------
 ; Shadow Sprite Attribute Table (SAT) in RAM

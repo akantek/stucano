@@ -7,83 +7,54 @@ player_fire_demo:
   call loadSpriteColors
   call initSpriteAttributes
 
-  ; Initialize starting coordinates
+  ; Initialize starting coordinates to match your init data
   ld a, 120
   ld (player_x), a
   ld (player_y), a
 
-  ; Pre-configure Bullet Sprites & State
-  ld a, 7
-  ld (active_sprites), a     ; Always draw 7 sprites (5 player + 2 bullets)
-
+  ld a, INIT_NUM_SPRITES
+  ld (active_sprites), a   ; Start with the default 5 sprites
   xor a
-  ld (fire1_active), a
-  ld (fire2_active), a
-  ld (space_was_pressed), a
-  ld (cooldown_timer), a     ; Initialize cooldown to 0
-
-  ; Sprite 4 (Bullet 1)
-  ld a, 48
-  ld (sprite4_pat), a
-  ld a, 10
-  ld (sprite4_timer), a      
-  ld a, 240                  ; Hide cleanly offscreen
-  ld (sprite4_y), a
-
-  ; Sprite 5 (Bullet 2)
-  ld a, 48
-  ld (sprite5_pat), a
-  ld a, 10
-  ld (sprite5_timer), a
-  ld a, 240
-  ld (sprite5_y), a
-
-  ; Sprite 6 (Terminator)
-  ld a, $D8
-  ld (sprite6_y), a          ; Lock the terminator to Sprite 6
+  ld (fire0_active), a      ; Bullet starts inactive
   ei
 
-.main_loop:
+ .main_loop:
   call wait_vsync
 .vblank_trace_start:
   ld a, (active_sprites)
   call loadSpriteAttributes
 .vblank_trace_end:
 
-  ; --- PROCESS GLOBAL COOLDOWN ---
-  ld a, (cooldown_timer)
-  or a
-  jr z, .scan_input          ; If 0, skip decrement
-  dec a
-  ld (cooldown_timer), a
-
-.scan_input:
   call scan_keypad
   ld c, a
 
   ; --- X AXIS (Horizontal) ---
 .check_left:
-  bit 4, c
-  jr nz, .check_right
+  bit 4, c              ; Check bit 4 (Left)
+  jr nz, .check_right   ; If 1 (not pressed), skip to checking Right
 
+  ; Move Left
   ld a, (player_x)
   dec a
   ld (player_x), a
-  jr .check_y_axis
+  jr .check_y_axis      ; Skip right check (can't go left and right simultaneously)
 
 .check_right:
-  bit 7, c
-  jr nz, .check_y_axis
+  bit 7, c              ; Check bit 7 (Right)
+  jr nz, .check_y_axis  ; If 1 (not pressed), skip to Y axis
 
+  ; Move Right
   ld a, (player_x)
   inc a
   ld (player_x), a
 
 .check_y_axis:
-.check_up:
-  bit 5, c
-  jr nz, .check_down
 
+.check_up:
+  bit 5, c              ; Check bit 5 (Up)
+  jr nz, .check_down    ; If 1 (not pressed), skip to checking Down
+
+  ; Move Up
   ld a, (player_y)
   dec a
   ld (player_y), a
@@ -93,114 +64,87 @@ player_fire_demo:
   bit 6, c
   jr nz, .check_space
 
+  ; Move Down
   ld a, (player_y)
   inc a
   ld (player_y), a
 
 .check_space:
-  bit 0, c
-  jr nz, .space_released
+  bit 0, c                   ; Check bit 0 (Space bar)
+  jr nz, .space_released     ; If 1 (not pressed), jump to reset fla
 
-  ; Space IS pressed. Check debounce.
+  ; Space IS pressed. Check debounce flag.
   ld a, (space_was_pressed)
+  or a                       
+  jr nz, .update_fire_logic  ; Already pressed, skip spawning
+
+  ; Check if a bullet is already on screen (max 1 bullet at a time)
+  ld  a, (fire0_active)
   or a
-  jr nz, .update_bullets     ; Already pressed, wait for the player to release the key
+  jr nz, .update_fire_logic
 
-  ; Check if the 7-frame cooldown is active
-  ld a, (cooldown_timer)
-  or a
-  jr nz, .update_bullets     ; Can't fire yet, cooldown active
+  ; FIRE NEW BULLET
+ld a, 1
+  ld (space_was_pressed), a  ; Set debounce flag
+  ld (fire0_active), a        ; Set bullet active flag
 
-  ; We want to fire. Set debounce flag and cooldown timer.
-  ld a, 1
-  ld (space_was_pressed), a
-  ld a, 7
-  ld (cooldown_timer), a
+ld a, 6
+  ld (active_sprites), a     ; Increase sprite count to 6
 
-  ; Find an available bullet slot
-  ld a, (fire1_active)
-  or a
-  jr z, .use_slot_1
+; Set starting position relative to player
+  ld a, (player_x)
+  add a, 25                  ; Spawn at the nose of the helicopter
+  ld (fire0_x), a
+  ld a, (player_y)
+  add a, 8                   ; Center it vertically
+  ld (fire0_y), a
 
-  ld a, (fire2_active)
-  or a
-  jr z, .use_slot_2
+  ; Configure Sprite 4 (The Bullet)
+  ld a, 48                   ; Pattern 48 (helicopter_fire)
+  ld (sprite4_pat), a
+  ld a, 10                   ; Color 10 = Dark Yellow
+  ld (sprite4_timer), a      
 
-  ; If we get here, both bullets are currently on screen. Do nothing.
-  jr .update_bullets
+  ; Configure Sprite 5 (The New Terminator)
+  ld a, $D8
+  ld (sprite5_y), a          ; Tell VDP to stop rendering here
+  jr .update_fire_logic
+
+
 
 .space_released:
-  xor a
-  ld (space_was_pressed), a  ; Clear debounce flag so the player can fire again
-  jr .update_bullets
+  xor a                      ; A = 0
+  ld (space_was_pressed), a  ; Clear the flag
 
-.use_slot_1:
-  ld a, 1
-  ld (fire1_active), a
-  ld a, (player_x)
-  add a, 25
-  ld (fire1_x), a
-  ld a, (player_y)
-  add a, 8
-  ld (fire1_y), a
-  jr .update_bullets
-
-.use_slot_2:
-  ld a, 1
-  ld (fire2_active), a
-  ld a, (player_x)
-  add a, 25
-  ld (fire2_x), a
-  ld a, (player_y)
-  add a, 8
-  ld (fire2_y), a
-  ; Falls through to .update_bullets
-
-.update_bullets:
-  ; --- Update Bullet 1 ---
-  ld a, (fire1_active)
+.update_fire_logic:
+  ; --- MOVE BULLET ---
+  ld a, (fire0_active)
   or a
-  jr z, .check_bullet2
+  jr z, .end_keypad          ; If bullet is not active, skip movement
 
-  ld a, (fire1_x)
-  add a, 6
-  ld (fire1_x), a
+  ; Move the bullet right
+  ld a, (fire0_x)
+  add a, 6                   ; Speed: 6 pixels per frame
+  ld (fire0_x), a
+
+  ; Check if it went off the right edge of the screen
   cp 240
-  jr nc, .despawn_b1
+  jr nc, .despawn_bullet
 
+  ; Still on screen - Update Sprite RAM
   ld (sprite4_x), a
-  ld a, (fire1_y)
+  ld a, (fire0_y)
   ld (sprite4_y), a
-  jr .check_bullet2
-
-.despawn_b1:
-  xor a
-  ld (fire1_active), a
-  ld a, 240                  ; Park it safely offscreen
-  ld (sprite4_y), a
-
-.check_bullet2:
-  ; --- Update Bullet 2 ---
-  ld a, (fire2_active)
-  or a
-  jr z, .end_keypad
-
-  ld a, (fire2_x)
-  add a, 6
-  ld (fire2_x), a
-  cp 240
-  jr nc, .despawn_b2
-
-  ld (sprite5_x), a
-  ld a, (fire2_y)
-  ld (sprite5_y), a
   jr .end_keypad
 
-.despawn_b2:
+.despawn_bullet:
   xor a
-  ld (fire2_active), a
-  ld a, 240
-  ld (sprite5_y), a
+  ld (fire0_active), a        ; Turn off bullet
+  ld a, 5
+  ld (active_sprites), a     ; Reduce sprite count back to 5
+  ld a, $D8
+  ld (sprite4_y), a          ; Put the terminator back into Sprite 4
+
 
 .end_keypad:
   call update_player_sprites
