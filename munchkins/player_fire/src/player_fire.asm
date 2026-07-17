@@ -27,7 +27,7 @@ player_fire_demo:
   ld (sprite4_pat), a
   ld a, 10
   ld (sprite4_timer), a      
-  ld a, 240                  ; Hide cleanly offscreen
+  ld a, 217                  ; Hide cleanly offscreen
   ld (sprite4_y), a
 
   ; Sprite 5 (Bullet 2)
@@ -35,7 +35,7 @@ player_fire_demo:
   ld (sprite5_pat), a
   ld a, 10
   ld (sprite5_timer), a
-  ld a, 240
+  ld a, 217
   ld (sprite5_y), a
 
   ; Sprite 6 (Terminator)
@@ -165,7 +165,7 @@ player_fire_demo:
   ld a, (fire1_x)
   add a, 6
   ld (fire1_x), a
-  cp 240
+  cp 217
   jr nc, .despawn_b1
 
   ld (sprite4_x), a
@@ -176,7 +176,7 @@ player_fire_demo:
 .despawn_b1:
   xor a
   ld (fire1_active), a
-  ld a, 240                  ; Park it safely offscreen
+  ld a, 217                  ; Park it safely offscreen
   ld (sprite4_y), a
 
 .check_bullet2:
@@ -188,7 +188,7 @@ player_fire_demo:
   ld a, (fire2_x)
   add a, 6
   ld (fire2_x), a
-  cp 240
+  cp 217
   jr nc, .despawn_b2
 
   ld (sprite5_x), a
@@ -199,7 +199,7 @@ player_fire_demo:
 .despawn_b2:
   xor a
   ld (fire2_active), a
-  ld a, 240
+  ld a, 217
   ld (sprite5_y), a
 
 .end_keypad:
@@ -234,18 +234,11 @@ loadSpritePatterns:
   ret
 
 loadSpriteColors:
-  ; --- Load colors for Sprites 0 & 1 ---
+; --- Load colors for Sprites 0 through 5 ---
   ld hl, player_helicopter_colors_start   ; Source RAM
   ld de, VRAM_SPR_COLORS                  ; Dest VRAM ($7400)
   ld a, SPRITE_VRAM_BANK                  ; Bank 1
-  ld c, player_helicopter_colors_end - player_helicopter_colors_start
-  call write_vram_fast
-
-  ; --- Load colors for Sprites 2 & 3 ---
-  ld hl, player_helicopter_colors_start   ; Source RAM
-  ld de, VRAM_SPR_COLORS + 32             ; Dest VRAM ($7400)
-  ld a, SPRITE_VRAM_BANK                  ; Bank 1
-  ld c, player_helicopter_colors_end - player_helicopter_colors_start
+  ld c, player_helicopter_colors_end - player_helicopter_colors_start ; Now 96 bytes
   call write_vram_fast
   ret
 
@@ -274,6 +267,10 @@ db $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44
 db 8,8,8,8, 8,8,8,8, 8,8,8,8, 8,8,8,8
 ; Sprite 3
 db $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44, $44,$44,$44,$44
+; Sprite 4 (Bullet 1 - Color 10, CC=0)
+db 10,10,10,10, 10,10,10,10, 10,10,10,10, 10,10,10,10
+; Sprite 5 (Bullet 2 - Color 10, CC=0)
+db 10,10,10,10, 10,10,10,10, 10,10,10,10, 10,10,10,10
 player_helicopter_colors_end:
 sprite_color_data_end:
 
