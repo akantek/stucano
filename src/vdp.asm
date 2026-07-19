@@ -248,3 +248,29 @@ loadSpriteAttributes:
   otir                           ; Output (HL) -> PORT C, HL++, B--
   ret
 
+
+; ==============================================================================
+; Routine:      clear_all_sprites
+; Description:  Initializes all 32 sprites in the shadow SAT to Y=217 (hidden).
+;               Uses the Z80 overlapping block copy trick for maximum speed.
+; Destroys:     A, BC, DE, HL
+; ==============================================================================
+clear_all_sprites:
+  ; 1. Manually set the first sprite (Sprite 0) to a safe, hidden state
+  ld hl, shadow_sat
+  ld (hl), 217       ; Byte 0: Y = 217 (Off-screen)
+  inc hl
+  ld (hl), 0         ; Byte 1: X = 0
+  inc hl
+  ld (hl), 0         ; Byte 2: Pattern = 0
+  inc hl
+  ld (hl), 0         ; Byte 3: Timer/Attribute = 0
+
+  ; 2. Copy Sprite 0's data into Sprite 1, which copies into Sprite 2, etc.
+  ld hl, shadow_sat        ; Source: Start of Sprite 0
+  ld de, shadow_sat + 4    ; Destination: Start of Sprite 1
+  ld bc, 128 - 4           ; Length: Total size (128) minus the 4 bytes we just set
+  
+  ldir                     ; Execute the overlapping copy
+  ret
+
