@@ -8,7 +8,7 @@ ufo_demo:
   call loadSpritePatterns
   call loadSpriteColors
   call initSpriteAttributes
-  call loadSpriteAttributes
+  call loadUfoSpriteAttributes
 
   ; Initialize the sine wave angle
   xor a
@@ -24,7 +24,7 @@ ufo_demo:
 .ufo_loop:
   call wait_vsync        ; Spin until vblank is fired
 .vblank_trace_start:
-  call loadSpriteAttributes
+  call loadUfoSpriteAttributes
 .vblank_trace_end:
 
   call update_ufo_position
@@ -82,12 +82,12 @@ loadSpriteColors:
   ret
 
 ; ==============================================================================
-; Routine:      loadSpriteAttributes
+; Routine:      loadUfoSpriteAttributes
 ; Description:  Transfers Shadow RAM to VRAM. 
 ; This routine 2,775 T-states (cycles), approximately 0.775 milliseconds
 ; (or 775 microseconds).
 ; ==============================================================================
-loadSpriteAttributes:
+loadUfoSpriteAttributes:
   ld hl, shadow_sat      ; Source RAM
   ld c, VDP_DATA_PORT           ; VDP data port
 

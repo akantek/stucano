@@ -1,12 +1,18 @@
-all: ufo.rom
+OUT_DIR = ../../../out
+TARGET = $(OUT_DIR)/pfire.rom
 
-../out:
-	mkdir -p ../../../out
+.PHONY: all clean
 
-ufo.rom: main.asm rom.asm | ../../../out
-	pasmo ${INCLUDES} rom.asm ../../../out/ufo.rom
+all: $(TARGET)
 
-.PHONY: clean
+# Create the output directory
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
+
+# The target path must perfectly match the Pasmo output path
+$(TARGET): main.asm rom.asm | $(OUT_DIR)
+	pasmo $(INCLUDES) rom.asm $(TARGET)
+
 clean:
-	rm -f ../out/*.rom ../out/*.bin
+	rm -f $(OUT_DIR)/*.rom $(OUT_DIR)/*.bin
 
